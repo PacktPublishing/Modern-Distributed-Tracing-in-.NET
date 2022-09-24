@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "frontend", "frontend\fronte
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "storage", "storage\storage.csproj", "{B31CB9E7-9F25-4BF2-9CE7-5730A5577E1A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "common", "common\common.csproj", "{AEC2AE40-1F34-4595-BF20-C280214317A0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +26,9 @@ Global
 		{B31CB9E7-9F25-4BF2-9CE7-5730A5577E1A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B31CB9E7-9F25-4BF2-9CE7-5730A5577E1A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B31CB9E7-9F25-4BF2-9CE7-5730A5577E1A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AEC2AE40-1F34-4595-BF20-C280214317A0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AEC2AE40-1F34-4595-BF20-C280214317A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AEC2AE40-1F34-4595-BF20-C280214317A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AEC2AE40-1F34-4595-BF20-C280214317A0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

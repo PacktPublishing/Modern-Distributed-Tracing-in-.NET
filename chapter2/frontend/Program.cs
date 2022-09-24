@@ -1,4 +1,5 @@
 using frontend;
+using common;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,6 +12,7 @@ builder.Services.AddHttpClient("storage", httpClient =>
     httpClient.BaseAddress = new Uri("http://localhost:5050");
 });
 
+builder.Logging.ConfigureLogs();
 var app = builder.Build();
 
 app.UseStatusCodePagesWithRedirects("/errors/{0}");
