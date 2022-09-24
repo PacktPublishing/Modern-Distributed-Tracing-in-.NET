@@ -52,6 +52,15 @@ services:
       - DOTNET_Metrics__Endpoints=http://+:52345     
     volumes:
       - ./storage-tmp:/tmp
+  prometheus:
+    image: prom/prometheus:latest
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+    depends_on:
+      - dotnetmonitor-frontend
+      - dotnetmonitor-storage      
 volumes:
   frontend_tmp:
   storage_tmp:
