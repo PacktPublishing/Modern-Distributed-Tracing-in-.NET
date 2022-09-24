@@ -1,0 +1,20 @@
+version: "3.9"
+services:
+  frontend:
+    build:
+      context: ./
+      dockerfile: ./frontend/Dockerfile
+    ports:
+      - "5051:5051"
+    depends_on:
+      - storage
+    environment:
+      - ASPNETCORE_URLS=http://+:5051
+  storage:
+    build:
+      context: ./
+      dockerfile: ./storage/Dockerfile
+    ports:
+      - "5050:5050"
+    environment:
+      - ASPNETCORE_URLS=http://+:5050
