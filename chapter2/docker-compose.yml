@@ -8,10 +8,9 @@ services:
       - "5051:5051"
     depends_on:
       - storage
-    cap_add:
-      - SYS_PTRACE
     environment:
-      - ASPNETCORE_URLS=http://+:5051   
+      - ASPNETCORE_URLS=http://+:5051
+      - Storage__Endpoint=http://storage:5050
     volumes:
       - ./frontend-tmp:/tmp
   storage:
@@ -22,7 +21,7 @@ services:
       - "5050:5050"
     environment:
       - ASPNETCORE_URLS=http://+:5050
-      - MySql:connectionString=server=mysql;user=root;password=${MYSQL_PASSWORD};database=memes
+      - ConnectionString__MySql=server=mysql;user=root;password=${MYSQL_PASSWORD};database=memes
     volumes:
       - storage-tmp:/tmp
   mysql:

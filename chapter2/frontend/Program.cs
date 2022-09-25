@@ -6,11 +6,14 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddRazorPages();
 
-builder.Services.AddSingleton<StorageService>();
+var storageConfig = builder.Configuration.GetSection("Storage");
+var storageEndpoint = storageConfig?.GetValue<string>("Endpoint") ?? "http://localhost:5050";
 builder.Services.AddHttpClient("storage", httpClient =>
 {
-    httpClient.BaseAddress = new Uri("http://storage:5050");
+    httpClient.BaseAddress = new Uri(storageEndpoint);
 });
+
+builder.Services.AddSingleton<StorageService>();
 
 builder.Logging.ConfigureLogs();
 var app = builder.Build();

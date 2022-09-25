@@ -2,17 +2,23 @@ using common;
 using storage;
 using Microsoft.EntityFrameworkCore;
 
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddControllers();
 
-var connectionString = builder.Configuration.GetSection("MySql")["connectionString"];
+var mySqlConnectionString = builder.Configuration.GetConnectionString("MySql");
 var serverVersion = new MySqlServerVersion(new Version(8, 0, 30));
 
-builder.Services.AddDbContext<MemeDbContext>(
-    dbContextOptions => dbContextOptions
-        .UseMySql(connectionString, serverVersion, options => options.EnableRetryOnFailure()));
+builder.Services.AddDbContext<MemeDbContext>(options =>
+    {
+        if (mySqlConnectionString != null)
+        {
+            options.UseMySql(mySqlConnectionString, serverVersion, options => options.EnableRetryOnFailure());
+        }
+        options.UseInMemoryDatabase("memes");
+    });
 
 builder.Logging.ConfigureLogs();
 
