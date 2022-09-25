@@ -11,9 +11,7 @@ services:
     cap_add:
       - SYS_PTRACE
     environment:
-      - ASPNETCORE_URLS=http://+:5051
-      - DOTNET_EnableCrashReport=1
-      - DOTNET_DbgEnableMiniDump=1      
+      - ASPNETCORE_URLS=http://+:5051   
     volumes:
       - ./frontend-tmp:/tmp
   storage:
@@ -22,14 +20,19 @@ services:
       dockerfile: ./storage/Dockerfile
     ports:
       - "5050:5050"
-    cap_add:
-      - SYS_PTRACE
     environment:
       - ASPNETCORE_URLS=http://+:5050
-      - DOTNET_EnableCrashReport=1
-      - DOTNET_DbgEnableMiniDump=1
+      - MySql:connectionString=server=mysql;user=root;password=${MYSQL_PASSWORD};database=memes
     volumes:
-      - ./storage-tmp:/tmp
+      - storage-tmp:/tmp
+  mysql:
+    image: docker.io/bitnami/mysql
+    ports:
+      - '3306:3306'
+    volumes:
+      - 'mysql_data:/bitnami/mysql/data'
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_PASSWORD}
   dotnetmonitor-frontend:
     image: mcr.microsoft.com/dotnet/monitor:6.2.2
     command: --no-auth
@@ -37,8 +40,8 @@ services:
       - "52333:52333"
       - "52335:52335"
     environment:
-      - DOTNET_URLS=http://+:52333
-      - DOTNET_Metrics__Endpoints=http://+:52335      
+      - DOTNET_URLS=http://+:52343
+      - DOTNET_Metrics__Endpoints=http://+:52345
     volumes:
       - ./frontend-tmp:/tmp
   dotnetmonitor-storage:
@@ -48,10 +51,10 @@ services:
       - "52343:52343"
       - "52345:52345"
     environment:
-      - DOTNET_URLS=http://+:52343
-      - DOTNET_Metrics__Endpoints=http://+:52345     
+      - DOTNET_URLS=http://+:52333
+      - DOTNET_Metrics__Endpoints=http://+:52335     
     volumes:
-      - ./storage-tmp:/tmp
+      - storage-tmp:/tmp
   prometheus:
     image: prom/prometheus:latest
     volumes:
@@ -62,5 +65,7 @@ services:
       - dotnetmonitor-frontend
       - dotnetmonitor-storage      
 volumes:
-  frontend_tmp:
-  storage_tmp:
+  mysql_data:
+    driver: local
+  storage-tmp:
+  frontend-tmp:

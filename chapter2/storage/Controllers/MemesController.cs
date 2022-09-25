@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Concurrent;
+using Microsoft.EntityFrameworkCore;
 
 namespace storage.Controllers;
 
@@ -7,21 +7,23 @@ namespace storage.Controllers;
 [Route("[controller]")]
 public class MemesController : ControllerBase
 {
-    private static readonly ConcurrentDictionary<string, byte[]> _storage = new();
+    private readonly MemeDbContext _dbContext;
     private readonly ILogger<MemesController> _logger;
 
-    public MemesController(ILogger<MemesController> logger)
+    public MemesController(MemeDbContext dbContext, ILogger<MemesController> logger)
     {
+        _dbContext = dbContext;
         _logger = logger;
     }
 
     [HttpGet("{name}")]
     [Produces("image/png")]
-    public ActionResult Get(string name, CancellationToken cancellationToken)
+    public async Task<ActionResult> Get(string name, CancellationToken cancellationToken)
     {
-        if (_storage.TryGetValue(name, out var data)) {
-            _logger.LogInformation("Returning '{name}', {size} bytes", name, data.Length);
-            return new FileStreamResult(new MemoryStream(data), "image/png");
+        Meme? meme = await _dbContext.Meme.Where(m => m.Name == name).SingleOrDefaultAsync(cancellationToken);
+        if (meme != null) {
+            _logger.LogInformation("Returning '{meme}', {size} bytes", meme.Name, meme.Data.Length);
+            return new FileStreamResult(new MemoryStream(meme.Data), "image/png");
         }
 
         _logger.LogWarning("Meme '{name}' not found", name);
@@ -32,13 +34,12 @@ public class MemesController : ControllerBase
     [Consumes("image/png")]
     public async Task<ActionResult> Put(string name, CancellationToken cancellationToken) {
         using var stream = new MemoryStream();
-        await Request.Body.CopyToAsync(stream);
-        if (_storage.TryAdd(name, stream.ToArray())) {
-            _logger.LogInformation("Uploading '{name}', {size} bytes", name, stream.Length);
-            return Ok();
-        } 
+        await Request.Body.CopyToAsync(stream, cancellationToken);
 
-        _logger.LogWarning("Meme '{name}' already exists", name);
-        return Conflict();
+        _dbContext.Meme.Add(new Meme(name, stream.ToArray()));
+        await _dbContext.SaveChangesAsync(cancellationToken);
+        _logger.LogInformation("Uploading '{name}', {size} bytes", name, stream.Length);
+
+        return Ok();
     }
 }
