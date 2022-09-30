@@ -4,7 +4,6 @@
     "storage": {
       "commandName": "Project",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development",
         "OTEL_SERVICE_NAME": "storage"
       },
       "applicationUrl": "https://localhost:7070;http://localhost:5050",

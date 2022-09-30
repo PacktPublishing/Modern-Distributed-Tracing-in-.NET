@@ -9,9 +9,9 @@ services:
     depends_on:
       - storage
     environment:
+      - Storage__Endpoint=http://storage:5050
       - ASPNETCORE_URLS=http://+:5051
       - OTEL_SERVICE_NAME=frontend
-      - Storage__Endpoint=http://storage:5050
       - OtelCollector__Endpoint=http://otelcollector:4318
   storage:
     build:
@@ -36,7 +36,7 @@ services:
       - MYSQL_ROOT_PASSWORD=pwd
   otelcollector:
     image: otel/opentelemetry-collector-contrib
-    command: ["--config=/etc/otel-collector-config.yaml", "--feature-gates=receiver.dockerstats.useScraperV2"]
+    command: ["--config=/etc/otel-collector-config.yml", "--feature-gates=receiver.dockerstats.useScraperV2"]
     ports:
       - "8889:8889"   # Prometheus exporter metrics
       - "13133:13133" # health_check extension
@@ -45,7 +45,7 @@ services:
       - "55679:55679" # zpages extension
     volumes:
       - //var/run/docker.sock:/var/run/docker.sock
-      - ./configs/otel-collector-config.yaml:/etc/otel-collector-config.yaml
+      - ./configs/otel-collector-config.yml:/etc/otel-collector-config.yml
     depends_on:
       - jaeger
   jaeger:

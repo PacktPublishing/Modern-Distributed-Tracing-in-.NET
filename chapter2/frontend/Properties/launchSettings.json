@@ -6,7 +6,6 @@
       "launchBrowser": true,
       "applicationUrl": "https://localhost:7071;http://localhost:5051",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development",
         "OTEL_SERVICE_NAME": "frontend"
       }
     }

@@ -1,17 +1,12 @@
 receivers:
   docker_stats:
-    collection_interval: 5s
     api_version: 1.41
     env_vars_to_metric_labels:
       OTEL_SERVICE_NAME: service.name
   otlp:
     protocols:
-      grpc:
       http:
-        cors:
-          allowed_origins:
-            - http://*
-            - https://*
+
 exporters:
   jaeger:
     endpoint: jaeger:14250
@@ -28,15 +23,13 @@ processors:
   batch:
   resourcedetection/docker:
     detectors: [env, docker]
-    timeout: 2s
-    override: false
 
 service:
   pipelines:
     traces:
       receivers: [otlp]
-      exporters: [jaeger]
       processors: [batch, resourcedetection/docker]
+      exporters: [jaeger]
     metrics:
       receivers: [docker_stats, otlp]
       processors: [batch, resourcedetection/docker]
