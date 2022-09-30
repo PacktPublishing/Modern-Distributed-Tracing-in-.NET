@@ -6,7 +6,6 @@ WORKDIR /app
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
 COPY ["frontend/frontend.csproj", "frontend/"]
-COPY ["common/common.csproj", "common/"]
 RUN dotnet restore "frontend/frontend.csproj"
 COPY . .
 WORKDIR "/src/frontend"

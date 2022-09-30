@@ -6,7 +6,6 @@ WORKDIR /app
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
 COPY ["storage/storage.csproj", "storage/"]
-COPY ["common/common.csproj", "common/"]
 RUN dotnet restore "storage/storage.csproj"
 COPY . .
 WORKDIR "/src/storage"
