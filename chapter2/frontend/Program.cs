@@ -1,5 +1,8 @@
 using frontend;
-using common;
+using OpenTelemetry.Exporter;
+using OpenTelemetry.Logs;
+using OpenTelemetry.Metrics;
+using OpenTelemetry.Trace;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -49,13 +52,31 @@ static void ConfigureTelemetry(WebApplicationBuilder builder)
     // if there no collector endpoint, we won't set up OpenTelemetry, but will configure log correlation using ActivityTrackingOptions
     if (collectorEndpoint != null)
     {
-        builder.Logging.AddOpenTelemetry(options => options.ConfigureLogs(collectorEndpoint));
+        builder.Services.AddOpenTelemetryTracing(tracerProviderBuilder =>
+            tracerProviderBuilder.AddOtlpExporter(opt =>
+            {
+                opt.Protocol = OtlpExportProtocol.HttpProtobuf;
+                opt.Endpoint = new Uri(collectorEndpoint + "/v1/traces");
+            })
+            .AddHttpClientInstrumentation()
+            .AddAspNetCoreInstrumentation());
 
-        builder.Services.AddOpenTelemetryTracing(tracerProviderBuilder => 
-                        tracerProviderBuilder.ConfigureTracing(collectorEndpoint));
 
-        builder.Services.AddOpenTelemetryMetrics(meterProviderBuilder => 
-                        meterProviderBuilder.ConfigureMetrics(collectorEndpoint));
+        builder.Services.AddOpenTelemetryMetrics(meterProviderBuilder =>
+            meterProviderBuilder.AddOtlpExporter(opt =>
+            {
+                opt.Protocol = OtlpExportProtocol.HttpProtobuf;
+                opt.Endpoint = new Uri(collectorEndpoint + "/v1/metrics");
+            })
+            .AddHttpClientInstrumentation()
+            .AddAspNetCoreInstrumentation());
+        
+        builder.Logging.AddOpenTelemetry(options =>
+            options.AddOtlpExporter(opt =>
+            {
+                opt.Protocol = OtlpExportProtocol.HttpProtobuf;
+                opt.Endpoint = new Uri(collectorEndpoint + "/v1/logs");
+            }));
     }
     else
     {

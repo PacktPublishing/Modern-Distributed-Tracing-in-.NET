@@ -1,7 +1,9 @@
-using common;
 using storage;
 using Microsoft.EntityFrameworkCore;
 using OpenTelemetry.Trace;
+using OpenTelemetry.Exporter;
+using OpenTelemetry.Metrics;
+using OpenTelemetry.Logs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,7 +18,7 @@ builder.Services.AddDbContext<MemeDbContext>(options =>
     if (mySqlConnectionString != null)
     {
         options.UseMySql(mySqlConnectionString, serverVersion, options => options.EnableRetryOnFailure());
-    } 
+    }
     else
     {
         options.UseInMemoryDatabase("memes");
@@ -53,20 +55,32 @@ static void ConfigureTelemetry(WebApplicationBuilder builder)
     // if there no collector endpoint, we won't set up OpenTelemetry, but will configure log correlation using ActivityTrackingOptions
     if (collectorEndpoint != null)
     {
-        builder.Logging.AddOpenTelemetry(options => options.ConfigureLogs(collectorEndpoint));
-
         builder.Services.AddOpenTelemetryTracing(tracerProviderBuilder =>
-                        tracerProviderBuilder
-                            .ConfigureTracing(collectorEndpoint)
-                            .AddEntityFrameworkCoreInstrumentation(o =>
-                            {
-                                o.SetDbStatementForText = true;
-                                o.SetDbStatementForText = true;
-                            }));
+            tracerProviderBuilder.AddOtlpExporter(opt =>
+            {
+                opt.Protocol = OtlpExportProtocol.HttpProtobuf;
+                opt.Endpoint = new Uri(collectorEndpoint + "/v1/traces");
+            })
+            .AddHttpClientInstrumentation()
+            .AddAspNetCoreInstrumentation()
+            .AddEntityFrameworkCoreInstrumentation());
 
         builder.Services.AddOpenTelemetryMetrics(meterProviderBuilder =>
-                        meterProviderBuilder.ConfigureMetrics(collectorEndpoint));
-    } 
+            meterProviderBuilder.AddOtlpExporter(opt =>
+            {
+                opt.Protocol = OtlpExportProtocol.HttpProtobuf;
+                opt.Endpoint = new Uri(collectorEndpoint + "/v1/metrics");
+            })
+            .AddHttpClientInstrumentation()
+            .AddAspNetCoreInstrumentation());
+
+        builder.Logging.AddOpenTelemetry(options =>
+            options.AddOtlpExporter(opt =>
+            {
+                opt.Protocol = OtlpExportProtocol.HttpProtobuf;
+                opt.Endpoint = new Uri(collectorEndpoint + "/v1/logs");
+            }));
+    }
     else
     {
         // log correaltion is useful if you don't capture logs with OpenTelemetry
