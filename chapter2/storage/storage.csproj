@@ -7,9 +7,25 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="images\dotnet.png" />
+    <None Remove="Resources\dotnet.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="images\dotnet.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\common\common.csproj" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="6.0.9" />
     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="6.0.2" />
     <PackageReference Include="System.Linq.Async" Version="6.0.1" />
+	<PackageReference Include="OpenTelemetry.Instrumentation.EntityFrameworkCore" Version="1.0.0-beta.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Resources\dotnet.png" />
   </ItemGroup>
 </Project>
