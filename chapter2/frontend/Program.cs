@@ -17,7 +17,6 @@ builder.Services.AddHttpClient("storage", httpClient =>
 });
 
 builder.Services.AddSingleton<StorageService>();
-builder.Services.AddTransient<ErrorScenariosMiddleware>();
 
 ConfigureTelemetry(builder);
 
@@ -31,7 +30,6 @@ if (!app.Environment.IsDevelopment())
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
-app.UseMiddleware<ErrorScenariosMiddleware>();
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
@@ -80,7 +78,7 @@ static void ConfigureTelemetry(WebApplicationBuilder builder)
     }
     else
     {
-        // log correaltion is useful if you don't capture logs with OpenTelemetry
+        // log correlation is useful if you don't capture logs with OpenTelemetry
         builder.Logging.Configure(options => options.ActivityTrackingOptions = ActivityTrackingOptions.TraceId | ActivityTrackingOptions.SpanId);
     }
 }

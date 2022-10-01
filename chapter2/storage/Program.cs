@@ -83,7 +83,7 @@ static void ConfigureTelemetry(WebApplicationBuilder builder)
     }
     else
     {
-        // log correaltion is useful if you don't capture logs with OpenTelemetry
+        // log correlation is useful if you don't capture logs with OpenTelemetry
         builder.Logging.Configure(options => options.ActivityTrackingOptions = ActivityTrackingOptions.TraceId | ActivityTrackingOptions.SpanId);
     }
 }
