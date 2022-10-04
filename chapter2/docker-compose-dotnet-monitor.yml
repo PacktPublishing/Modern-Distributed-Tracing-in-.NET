@@ -14,7 +14,7 @@ services:
       - ASPNETCORE_URLS=http://+:5051
       - Storage__Endpoint=http://storage:5050
     volumes:
-      - ./frontend-tmp:/tmp
+      - ./tmp/frontend-tmp:/tmp
   storage:
     cpus: 0.1
     mem_limit: 256m
@@ -28,7 +28,7 @@ services:
       # for demo purposes only, make sure to pass environment securely
       - ConnectionStrings__MySql=server=mysql;user=root;password=pwd;database=memes
     volumes:
-      - ./storage-tmp:/tmp
+      - ./tmp/storage-tmp:/tmp
   mysql:
     image: docker.io/bitnami/mysql
     ports:
@@ -49,7 +49,7 @@ services:
       - DOTNET_URLS=http://+:52343
       - DOTNET_Metrics__Endpoints=http://+:52345
     volumes:
-      - ./frontend-tmp:/tmp
+      - ./tmp/frontend-tmp:/tmp
   dotnetmonitor-storage:
     image: mcr.microsoft.com/dotnet/monitor:6.2.2
     command: --no-auth
@@ -60,11 +60,12 @@ services:
       - DOTNET_URLS=http://+:52333
       - DOTNET_Metrics__Endpoints=http://+:52335     
     volumes:
-      - ./storage-tmp:/tmp
+      - ./tmp/storage-tmp:/tmp
   prometheus:
     image: prom/prometheus:latest
     volumes:
       - ./configs/prometheus-dotnet-montior.yml:/etc/prometheus/prometheus.yml
+      - ./tmp/prometheus:/prometheus
     ports:
       - "9090:9090"
     depends_on:

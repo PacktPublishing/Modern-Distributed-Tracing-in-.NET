@@ -4,12 +4,11 @@ namespace storage;
 
 public class MemeDbContext : DbContext
 {
-    public MemeDbContext(DbContextOptions<MemeDbContext> options)
-: base(options)
+    public MemeDbContext(DbContextOptions<MemeDbContext> options) : base(options)
     {
     }
 
-    public DbSet<Meme> Meme=> Set<Meme>();
+    public DbSet<Meme> Meme => Set<Meme>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

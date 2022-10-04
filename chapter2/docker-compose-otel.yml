@@ -60,10 +60,12 @@ services:
     image: prom/prometheus:latest
     volumes:
       - ./configs/prometheus-otel.yml:/etc/prometheus/prometheus.yml
+      - ./tmp/prometheus:/prometheus
     ports:
       - "9090:9090"
     depends_on:
       - otelcollector
+      
 volumes:
   mysql_data:
     driver: local

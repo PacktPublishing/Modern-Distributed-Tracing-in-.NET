@@ -3,6 +3,7 @@ using OpenTelemetry.Exporter;
 using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
+using System.Diagnostics;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,6 +32,14 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
+// return context to the caller with W3C traceresponse (draft specification)
+app.Use(async (ctx, next) =>
+{
+    ctx.Response.Headers.Add("traceresponse", Activity.Current?.Id);
+    await next.Invoke();
+});
+
+
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
@@ -44,8 +53,7 @@ app.Run();
 
 static void ConfigureTelemetry(WebApplicationBuilder builder)
 {
-    var collectorEndpoint = builder.Configuration.GetSection("OtelCollector")?
-            .GetValue<string>("Endpoint");
+    var collectorEndpoint = builder.Configuration.GetSection("OtelCollector")?.GetValue<string>("Endpoint");
 
     // if there no collector endpoint, we won't set up OpenTelemetry, but will configure log correlation using ActivityTrackingOptions
     if (collectorEndpoint != null)

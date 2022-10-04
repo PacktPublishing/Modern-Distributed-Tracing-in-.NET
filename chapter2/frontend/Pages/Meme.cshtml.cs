@@ -27,7 +27,7 @@ namespace frontend.Pages
 
             try 
             {
-                var stream = await _storage.ReadAsync(Name, cancellationToken);
+                using var stream = await _storage.ReadAsync(Name, cancellationToken);
                 using var copy = new MemoryStream();
                 await stream.CopyToAsync(copy, cancellationToken);
                 copy.Position = 0;

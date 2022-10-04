@@ -49,8 +49,7 @@ app.Run();
 
 static void ConfigureTelemetry(WebApplicationBuilder builder)
 {
-    var collectorEndpoint = builder.Configuration.GetSection("OtelCollector")?
-        .GetValue<string>("Endpoint");
+    var collectorEndpoint = builder.Configuration.GetSection("OtelCollector")?.GetValue<string>("Endpoint");
 
     // if there no collector endpoint, we won't set up OpenTelemetry, but will configure log correlation using ActivityTrackingOptions
     if (collectorEndpoint != null)

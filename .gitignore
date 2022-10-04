@@ -1,6 +1,5 @@
 *.appsettings.Development.json
-frontend-tmp/
-storage-tmp/
+tmp/
 *.env
 
 ## Ignore Visual Studio temporary files, build results, and
