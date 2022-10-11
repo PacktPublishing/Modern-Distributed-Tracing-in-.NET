@@ -6,10 +6,10 @@ namespace storage
     public class AzureBlobStorage : IStorageService
     {
         private readonly BlobContainerClient _containerClient;
-        private readonly AzureBlobStorageOptions _options;
-        public AzureBlobStorage(IOptions<AzureBlobStorageOptions> options)
+        private readonly AzureBlobOptions _options;
+        public AzureBlobStorage(IOptions<CloudStorageOptions> options)
         {
-            _options = options.Value;
+            _options = options.Value.AzureBlob ?? throw new ArgumentNullException(nameof(options.Value.AzureBlob));
             var storageClient = new BlobServiceClient(_options.ConnectionString);
             _containerClient = storageClient.GetBlobContainerClient(_options.Container);
             _containerClient.CreateIfNotExists();
@@ -18,15 +18,18 @@ namespace storage
 
         public async Task<Stream> ReadAsync(string name, CancellationToken cancellationToken)
         {
-            var blobClient = _containerClient.GetBlobClient(name);
-            var blobResult = await blobClient.DownloadContentAsync(cancellationToken);
+            var blobResult = await _containerClient
+                .GetBlobClient(name)
+                .DownloadContentAsync(cancellationToken);
+            
             return blobResult.Value.Content.ToStream();
         }
 
         public async Task WriteAsync(string name, Stream stream, CancellationToken cancellationToken)
         {
-            var blobClient = _containerClient.GetBlobClient(name);
-            await blobClient.UploadAsync(stream, cancellationToken);
+            await _containerClient
+                .GetBlobClient(name)
+                .UploadAsync(stream, cancellationToken);
         }
     }
 }

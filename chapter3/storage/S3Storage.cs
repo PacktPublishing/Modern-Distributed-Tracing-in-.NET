@@ -9,9 +9,9 @@ namespace storage
     {
         private readonly AmazonS3Client _s3Client;
         private readonly S3Options _s3Options;
-        public S3Storage(IOptions<S3Options> options)
+        public S3Storage(IOptions<CloudStorageOptions> options)
         {
-            _s3Options = options.Value;
+            _s3Options = options.Value.S3Options ?? throw new ArgumentNullException(nameof(options.Value.S3Options));
             _s3Client = new AmazonS3Client(RegionEndpoint.GetBySystemName(_s3Options.BucketRegion));
         }
 

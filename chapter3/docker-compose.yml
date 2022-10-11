@@ -26,7 +26,7 @@ services:
       - OTEL_SERVICE_NAME=storage
       - OtelCollector__Endpoint=http://otelcollector:4318
       # for demo purposes only, make sure to pass environment securely
-      - AzureBlob__ConnectionString=$AZURE_BLOB_CONNECTIONSTRING
+      - CloudStorage__AzureBlob__ConnectionString=${AZURE_BLOB_CONNECTION_STRING}
       - Redis__ConnectionString=${REDIS_CONNECTION_STRING}
     volumes:
       - '${HOME}/.aws/credentials:/root/.aws/credentials'

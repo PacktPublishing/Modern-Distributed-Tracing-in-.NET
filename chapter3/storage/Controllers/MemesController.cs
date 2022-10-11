@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Distributed;
 using StackExchange.Redis;
 
 namespace storage.Controllers;
@@ -8,11 +9,10 @@ namespace storage.Controllers;
 public class MemesController : ControllerBase
 {
     private readonly IStorageService _storageService;
-    private readonly IDatabase _cache;
+    private readonly IDistributedCache _cache;
     private readonly ILogger<MemesController> _logger;
-    private static readonly TimeSpan ExpirationTime = TimeSpan.FromSeconds(10);
-
-    public MemesController(IStorageService storageService, IDatabase cache, ILogger<MemesController> logger)
+    
+    public MemesController(IStorageService storageService, IDistributedCache cache, ILogger<MemesController> logger)
     {
         _storageService = storageService;
         _cache = cache;
@@ -31,7 +31,7 @@ public class MemesController : ControllerBase
             await stream.CopyToAsync(copy, cancellationToken);
             copy.Position = 0;
 
-            await _cache.StringSetAsync(name, copy.ToArray(), ExpirationTime);
+            await _cache.SetAsync(name, copy.ToArray());
             copy.Position = 0;
             cachedStream = copy;
         }
@@ -49,7 +49,7 @@ public class MemesController : ControllerBase
         await _storageService.WriteAsync(name, copy, cancellationToken);
         
         copy.Position = 0;
-        await _cache.StringSetAsync(name, copy.ToArray(), ExpirationTime);
+        await _cache.SetAsync(name, copy.ToArray());
 
         _logger.LogInformation("Uploaded '{name}', {size} bytes", name, copy.Length);
 
@@ -60,10 +60,10 @@ public class MemesController : ControllerBase
     {
         try
         {
-            var redisData = await _cache.StringGetAsync(name);
-            if (redisData.HasValue)
+            var redisData = await _cache.GetAsync(name);
+            if (redisData != null)
             {
-                return new MemoryStream((byte[])redisData);
+                return new MemoryStream(redisData);
             }
         }
         catch (Exception ex) when (ex is RedisException || ex is RedisTimeoutException)
