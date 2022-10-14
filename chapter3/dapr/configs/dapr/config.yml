@@ -1,0 +1,12 @@
+apiVersion: dapr.io/v1alpha1
+kind: Configuration
+metadata:
+  name: config
+  namespace: memes
+spec:
+  metric:
+    enabled: true
+  tracing:
+    samplingRate: "1"
+    zipkin:
+      endpointAddress: "http://otelcollector:9412/api/v2/spans"

@@ -1,0 +1,99 @@
+version: "3.9"
+services:
+  frontend:
+    build:
+      context: ./
+      dockerfile: ./frontend/Dockerfile
+    ports:
+      - "5051:5051"
+      - "50002:50001"
+      - "8887:9090"
+    depends_on:
+      - storage
+      - placement      
+    environment:
+      - ASPNETCORE_URLS=http://+:5051
+      - OTEL_SERVICE_NAME=frontend
+      - Storage__Endpoint=http://storage:5050
+      - OtelCollector__Endpoint=http://otelcollector:4318
+  frontend-dapr:
+    image: "daprio/daprd:edge"
+    command: [ "./daprd",
+      "--app-id", "frontend",
+      "--app-port", "5051",
+      "--placement-host-address", "placement:50006",
+      "--config", "/etc/dapr/config.yml"]
+    depends_on:
+      - frontend
+    network_mode: "service:frontend"
+    volumes:
+      - ./configs/dapr:/etc/dapr/
+  storage:
+    build:
+      context: ./
+      dockerfile: ./storage/Dockerfile
+    ports:
+      - "5050:5050"
+      - "50001:50001"
+      - "8886:9090"      
+    depends_on:
+      - placement
+    environment:
+      - ASPNETCORE_URLS=http://+:5050
+      - OTEL_SERVICE_NAME=storage
+      - OtelCollector__Endpoint=http://otelcollector:4318
+  storage-dapr:
+    image: "daprio/daprd:edge"
+    command: [ "./daprd", 
+      "--app-id", "storage",
+      "--app-port", "5050",
+      "--placement-host-address", "placement:50006",
+      "--config", "/etc/dapr/config.yml",
+      "--components-path", "/etc/dapr/storage-components"]
+    depends_on:
+      - storage
+    network_mode: "service:storage"
+    volumes:
+      - ./configs/dapr:/etc/dapr/
+  otelcollector:
+    image: otel/opentelemetry-collector-contrib
+    command: ["--config=/etc/otel-collector-config.yml"]
+    ports:
+      - "8889:8889"   # Prometheus exporter metrics
+      - "13133:13133" # health_check extension
+      - "4317:4317"   # OTLP gRPC receiver
+      - "4318:4318"   # OTLP http receiver
+      - "9412:9411"   # Zipkin
+      - "55679:55679" # zpages extension
+    volumes:
+      - //var/run/docker.sock:/var/run/docker.sock
+      - ./configs/otel-collector-config.yml:/etc/otel-collector-config.yml
+    depends_on:
+      - jaeger
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    ports:
+      - "14250:14250"
+      - "14268:14268"
+      - "6831:6831/udp"
+      - "16686:16686"
+      - "16685:16685"
+  prometheus:
+    image: prom/prometheus:latest
+    volumes:
+      - ./configs/prometheus-otel.yml:/etc/prometheus/prometheus.yml
+      - ./tmp/prometheus:/prometheus
+    ports:
+      - "9090:9090"
+    depends_on:
+      - otelcollector
+      - storage
+      - frontend
+      - storage-dapr
+      - frontend-dapr
+
+  placement:
+    image: "daprio/dapr"
+    command: ["./placement", "--port", "50006"]
+    ports:
+      - "50006:50006"      

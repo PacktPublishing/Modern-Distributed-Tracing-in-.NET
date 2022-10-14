@@ -1,0 +1,40 @@
+receivers:
+  zipkin:
+    endpoint: 0.0.0.0:9412
+  otlp:
+    protocols:
+      http:
+  docker_stats:
+    api_version: 1.41
+    env_vars_to_metric_labels:
+      OTEL_SERVICE_NAME: service.name
+
+exporters:
+  jaeger:
+    endpoint: jaeger:14250
+    tls:
+      insecure: true
+  prometheus:
+    endpoint: "0.0.0.0:8889"
+    resource_to_telemetry_conversion: 
+      enabled: true
+  logging:
+    logLevel: info
+
+processors:
+  batch:
+
+service:
+  pipelines:
+    traces:
+      receivers: [otlp, zipkin]
+      processors: [batch]
+      exporters: [jaeger]
+    metrics:
+      receivers: [docker_stats, otlp]
+      processors: [batch]
+      exporters: [prometheus]
+    logs:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [logging]

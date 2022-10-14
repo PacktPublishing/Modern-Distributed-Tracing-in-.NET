@@ -1,0 +1,28 @@
+apiVersion: dapr.io/v1alpha1
+kind: Component
+metadata:
+  name: awss3
+spec:
+  type: bindings.aws.s3
+  version: v1
+  metadata:
+  - name: bucket
+    value: memeservice
+  - name: region
+    value: us-west-2
+  - name: endpoint
+    value: s3.us-west-2.amazonaws.com
+  - name: accessKey
+    secretKeyRef:
+      name: awsAccessKey
+      key: awsAccessKey
+  - name: secretKey
+    secretKeyRef:
+      name: awsSecretKey
+      key: awsSecretKey
+  - name: decodeBase64
+    value: true
+  - name: encodeBase64
+    value: false
+auth:
+  secretStore: localsecretstore

@@ -1,0 +1,24 @@
+apiVersion: dapr.io/v1alpha1
+kind: Component
+metadata:
+  name: azureblob
+spec:
+  type: bindings.azure.blobstorage
+  version: v1
+  metadata:
+  - name: storageAccount
+    value: exmemestorage
+  - name: storageAccessKey
+    secretKeyRef:
+      name: azureStorageSecretKey
+      key: azureStorageSecretKey
+  - name: container
+    value: memes
+  - name: decodeBase64
+    value: true
+  - name: getBlobRetryCount
+    value: 3
+  - name: publicAccessLevel
+    value: none
+auth:
+  secretStore: localsecretstore
