@@ -7,19 +7,21 @@ spec:
   version: v1
   metadata:
   - name: bucket
-    value: memeservice
+    secretKeyRef:
+      name: awsBucket
+      key: awsBucket
   - name: region
     value: us-west-2
   - name: endpoint
     value: s3.us-west-2.amazonaws.com
   - name: accessKey
     secretKeyRef:
-      name: awsAccessKey
-      key: awsAccessKey
+      name: awsKey
+      key: awsKey
   - name: secretKey
     secretKeyRef:
-      name: awsSecretKey
-      key: awsSecretKey
+      name: awsSecret
+      key: awsSecret
   - name: decodeBase64
     value: true
   - name: encodeBase64

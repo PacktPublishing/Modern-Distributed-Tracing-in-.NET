@@ -17,7 +17,7 @@ exporters:
     resource_to_telemetry_conversion: 
       enabled: true
   logging:
-    logLevel: debug # to write logs from services
+    logLevel: info # debug # to write logs from services
 
 processors:
   batch:

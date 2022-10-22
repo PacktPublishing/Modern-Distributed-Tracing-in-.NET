@@ -39,13 +39,9 @@ app.Use(async (ctx, next) =>
     await next.Invoke();
 });
 
-
-app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
-
-app.UseAuthorization();
 
 app.MapRazorPages();
 

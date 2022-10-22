@@ -1,0 +1,28 @@
+version: "3.9"
+services:
+  frontend:
+    build:
+      context: ../
+      dockerfile: ./frontend/Dockerfile
+    ports:
+      - "5051:5051"
+    environment:
+      - Storage__Endpoint=${LAMBDA_ENDPOINT}
+      - ASPNETCORE_URLS=http://+:5051
+      - OTEL_SERVICE_NAME=frontend
+      - OtelCollector__Endpoint=http://awsotelcollector:4318
+  awsotelcollector:
+    image: public.ecr.aws/aws-observability/aws-otel-collector:latest
+    command: ["--config=/etc/otel-collector-config.yml"]
+    ports:
+      - "8889:8889"
+      - "4317:4317"
+      - "4318:4318"
+      - "55680:55680"
+    environment:
+      - AWS_REGION=us-west-2
+      - AWS_PROFILE=lambda
+    volumes:
+      - ./configs/otel-collector-config.yml:/etc/otel-collector-config.yml
+      - '${HOME}/.aws:/root/.aws'
+

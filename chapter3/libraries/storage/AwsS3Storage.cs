@@ -23,7 +23,7 @@ namespace storage
                 Key = name
             };
 
-            GetObjectResponse response = await _s3Client.GetObjectAsync(request, cancellationToken);
+            var response = await _s3Client.GetObjectAsync(request, cancellationToken);
             return response.ResponseStream;
         }
 

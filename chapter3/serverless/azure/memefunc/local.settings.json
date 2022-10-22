@@ -1,0 +1,9 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "ASPNETCORE_ENVIRONMENT": "Development",
+    "FUNCTIONS_WORKER_RUNTIME": "dotnet",
+    "AzureWebJobsStorage": "Azure blob storage connection string",
+    "APPLICATIONINSIGHTS_CONNECTION_STRING": "Application Insights connection string"
+  }
+}

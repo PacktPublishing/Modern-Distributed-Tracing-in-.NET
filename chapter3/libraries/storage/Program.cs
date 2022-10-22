@@ -19,9 +19,6 @@ ConfigureCloudStorage(builder);
 ConfigureTelemetry(builder, redisConnection);
 
 var app = builder.Build();
-app.UseHttpsRedirection();
-
-app.UseAuthorization();
 
 app.MapControllers();
 
@@ -92,34 +89,34 @@ static void ConfigureTelemetry(WebApplicationBuilder builder, IConnectionMultipl
 
     builder.Services.AddOpenTelemetryTracing(tracerProviderBuilder =>
     {
-        tracerProviderBuilder.AddOtlpExporter(opt =>
+        tracerProviderBuilder.AddOtlpExporter(o =>
         {
-            opt.Protocol = OtlpExportProtocol.HttpProtobuf;
-            opt.Endpoint = new Uri(collectorEndpoint + "/v1/traces");
+            o.Protocol = OtlpExportProtocol.HttpProtobuf;
+            o.Endpoint = new Uri(collectorEndpoint + "/v1/traces");
         })
         .AddHttpClientInstrumentation()
         .AddAspNetCoreInstrumentation()
         // enable redis instrumentation - it needs connection instance
-        .AddRedisInstrumentation(redisConnection, options => options.SetVerboseDatabaseStatements = true)
+        .AddRedisInstrumentation(redisConnection, o => o.SetVerboseDatabaseStatements = true)
         // enable Azure SDK instrumentation
         .AddSource("Azure.*")
         // enable AWS instrumentation
-        .AddAWSInstrumentation(options => options.SuppressDownstreamInstrumentation = true);
+        .AddAWSInstrumentation(o => o.SuppressDownstreamInstrumentation = true);
     });
 
     builder.Services.AddOpenTelemetryMetrics(meterProviderBuilder =>
-        meterProviderBuilder.AddOtlpExporter(opt =>
+        meterProviderBuilder.AddOtlpExporter(o =>
         {
-            opt.Protocol = OtlpExportProtocol.HttpProtobuf;
-            opt.Endpoint = new Uri(collectorEndpoint + "/v1/metrics");
+            o.Protocol = OtlpExportProtocol.HttpProtobuf;
+            o.Endpoint = new Uri(collectorEndpoint + "/v1/metrics");
         })
         .AddHttpClientInstrumentation()
         .AddAspNetCoreInstrumentation());
 
-    builder.Logging.AddOpenTelemetry(options =>
-        options.AddOtlpExporter(opt =>
+    builder.Logging.AddOpenTelemetry(opt =>
+        opt.AddOtlpExporter(o =>
         {
-            opt.Protocol = OtlpExportProtocol.HttpProtobuf;
-            opt.Endpoint = new Uri(collectorEndpoint + "/v1/logs");
+            o.Protocol = OtlpExportProtocol.HttpProtobuf;
+            o.Endpoint = new Uri(collectorEndpoint + "/v1/logs");
         }));
 }

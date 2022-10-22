@@ -7,11 +7,13 @@ spec:
   version: v1
   metadata:
   - name: storageAccount
-    value: exmemestorage
+    secretKeyRef:
+      name: azStorageAccount
+      key: azStorageAccount
   - name: storageAccessKey
     secretKeyRef:
-      name: azureStorageSecretKey
-      key: azureStorageSecretKey
+      name: azStorageKey
+      key: azStorageKey
   - name: container
     value: memes
   - name: decodeBase64

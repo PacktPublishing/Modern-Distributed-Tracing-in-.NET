@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "memefunc": {
+      "commandName": "Project",
+      "commandLineArgs": "--port 5050",
+      "launchBrowser": false
+    }
+  }
+}
