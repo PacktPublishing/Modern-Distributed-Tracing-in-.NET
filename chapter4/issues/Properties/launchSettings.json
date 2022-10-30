@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json.schemastore.org/launchsettings.json",
+  "profiles": {
+    "issues": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "launchUrl": "issues",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "OTEL_SERVICE_NAME": "issues"
+      },
+      "applicationUrl": "http://localhost:5051",
+      "dotnetRunMessages": true
+    }
+  }
+}
