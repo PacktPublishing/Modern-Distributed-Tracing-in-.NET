@@ -18,7 +18,7 @@ namespace issues.Controllers
         public async Task<string> Ok(CancellationToken cancellationToken)
         {
             var ts = Stopwatch.StartNew();
-            await _httpClient.GetAsync("/dummy/?delay=100", cancellationToken);
+            await _httpClient.GetAsync("/dummy/?delay=10", cancellationToken);
             return $"Done in {ts.ElapsedMilliseconds} ms";
         }
     }

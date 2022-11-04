@@ -7,28 +7,52 @@ namespace issues.Controllers
     [Route("[controller]")]
     public class LockController : ControllerBase
     {
+        private readonly static List<string> notThreadSafeData = new List<string>();
+        private readonly static object lck = new object();
         private readonly HttpClient _httpClient;
         static SemaphoreSlim semaphoreSlim = new SemaphoreSlim(1, 1);
-
         public LockController(IHttpClientFactory httpClientFactory)
         {
             _httpClient = httpClientFactory.CreateClient("load");
         }
 
         [HttpGet]
-        public async Task<string> Lock(CancellationToken cancellationToken)
+        public async Task<string> Lock([FromQuery]bool? sync, CancellationToken token)
         {
             var ts = Stopwatch.StartNew();
-            await semaphoreSlim.WaitAsync(cancellationToken);
-            try
+            if (sync.GetValueOrDefault(false))
             {
-                await _httpClient.GetAsync("/dummy/?delay=100", cancellationToken);
-                return $"Done in {ts.ElapsedMilliseconds} ms";
+                lock(lck)
+                {
+                    ThreadUnsafeOperation();
+                }
+                await _httpClient.GetAsync("/dummy/?delay=10", token);
             }
-            finally
+            else
             {
-                semaphoreSlim.Release();
+                await semaphoreSlim.WaitAsync(token);
+                try
+                {
+                    ThreadUnsafeOperation();
+                    await _httpClient.GetAsync("/dummy/?delay=10", token);
+                }
+                finally
+                {
+                    semaphoreSlim.Release();
+                }
             }
+
+            return $"Done in {ts.ElapsedMilliseconds} ms";
+        }
+
+        private void ThreadUnsafeOperation()
+        {
+            if (notThreadSafeData.Count > 100)
+            {
+                notThreadSafeData.Clear();
+            }
+
+            notThreadSafeData.Add(Guid.NewGuid().ToString());
         }
     }
 }
