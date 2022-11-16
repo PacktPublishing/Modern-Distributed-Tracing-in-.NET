@@ -11,7 +11,7 @@ builder.Services.AddHttpClient("load", c => c.BaseAddress = new Uri("http://loca
 
 builder.Services.AddOpenTelemetryTracing(tracerProviderBuilder =>
     tracerProviderBuilder
-        .SetSampler(new TraceIdRatioBasedSampler(0.001))
+        .SetSampler(new TraceIdRatioBasedSampler(0.01))
         .AddOtlpExporter()
         .AddHttpClientInstrumentation()
         .AddAspNetCoreInstrumentation());
