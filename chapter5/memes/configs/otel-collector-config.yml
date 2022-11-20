@@ -24,12 +24,22 @@ processors:
   batch:
   resourcedetection/docker:
     detectors: [env, docker]
-
+  tail_sampling:
+    decision_wait: 2s
+    expected_new_traces_per_sec: 500
+    policies:
+      [
+        {
+          name: limit-rate,
+          type: rate_limiting,
+          rate_limiting: {spans_per_second: 50}
+        }
+      ]
 service:
   pipelines:
     traces:
       receivers: [otlp]
-      processors: [batch, resourcedetection/docker]
+      processors: [tail_sampling, batch, resourcedetection/docker]
       exporters: [jaeger]
     metrics:
       receivers: [docker_stats, otlp]
