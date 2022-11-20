@@ -4,7 +4,7 @@ using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 
-// ConfigureCustomPropagator();
+//XCorrelationIdPropagator.ConfigureCustomPropagatorSample();
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -56,12 +56,12 @@ static void ConfigureTelemetry(WebApplicationBuilder builder)
         .SetResourceBuilder(resourceBuilder)
         .AddHttpClientInstrumentation(options =>
         {
-            options.EnrichWithHttpRequestMessage = (activity, request) =>
+            options.EnrichWithHttpRequestMessage = (act, req) =>
             {
-                if (request.Options.TryGetValue(new HttpRequestOptionsKey<int>("try"), out var retryCount) && retryCount > 0)
-                    activity.SetTag("http.resend_count", retryCount);
+                if (req.Options.TryGetValue(new HttpRequestOptionsKey<int>("try"), out var tryCount) && tryCount > 0)
+                    act.SetTag("http.resend_count", tryCount);
 
-                activity.SetTag("http.request_content_length", request.Content?.Headers.ContentLength);
+                act.SetTag("http.request_content_length", req.Content?.Headers.ContentLength);
             };
 
             options.EnrichWithHttpResponseMessage = (activity, response) =>

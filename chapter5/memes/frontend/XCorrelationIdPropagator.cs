@@ -31,7 +31,7 @@ public class XCorrelationIdPropagator : TextMapPropagator
     }
 
 
-    static void ConfigureCustomPropagatorSample()
+    public static void ConfigureCustomPropagatorSample()
     {
         Sdk.SetDefaultTextMapPropagator(new CompositeTextMapPropagator(new TextMapPropagator[] {
         new OpenTelemetry.Extensions.Propagators.B3Propagator(true),
