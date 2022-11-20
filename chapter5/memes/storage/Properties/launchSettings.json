@@ -1,0 +1,11 @@
+{
+  "profiles": {
+    "storage": {
+      "commandName": "Project",
+      "applicationUrl": "http://localhost:5050",
+      "dotnetRunMessages": true,
+      "environmentVariables": { "ConnectionStrings__MySql1":"server=localhost;user=root;password=pwd;database=memes" }
+    }
+  },
+  "$schema": "https://json.schemastore.org/launchsettings.json"
+}
