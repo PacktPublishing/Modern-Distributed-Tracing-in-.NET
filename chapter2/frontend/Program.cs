@@ -40,12 +40,9 @@ app.Use(async (ctx, next) =>
 });
 
 
-app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
-
-app.UseAuthorization();
 
 app.MapRazorPages();
 

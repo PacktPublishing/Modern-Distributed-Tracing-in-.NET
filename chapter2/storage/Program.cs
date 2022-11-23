@@ -1,9 +1,9 @@
 using storage;
 using Microsoft.EntityFrameworkCore;
 using OpenTelemetry.Trace;
-using OpenTelemetry.Exporter;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Logs;
+using OpenTelemetry.Exporter;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -39,10 +39,6 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
-app.UseHttpsRedirection();
-
-app.UseAuthorization();
-
 app.MapControllers();
 
 app.Run();
@@ -68,7 +64,7 @@ static void ConfigureTelemetry(WebApplicationBuilder builder)
             meterProviderBuilder.AddOtlpExporter(opt =>
             {
                 opt.Protocol = OtlpExportProtocol.HttpProtobuf;
-                opt.Endpoint = new Uri(collectorEndpoint + "/v1/metrics");
+                opt.Endpoint = new Uri(collectorEndpoint + "/v1/traces");
             })
             .AddHttpClientInstrumentation()
             .AddAspNetCoreInstrumentation());
@@ -77,7 +73,7 @@ static void ConfigureTelemetry(WebApplicationBuilder builder)
             options.AddOtlpExporter(opt =>
             {
                 opt.Protocol = OtlpExportProtocol.HttpProtobuf;
-                opt.Endpoint = new Uri(collectorEndpoint + "/v1/logs");
+                opt.Endpoint = new Uri(collectorEndpoint + "/v1/traces");
             }));
     }
     else
