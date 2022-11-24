@@ -19,6 +19,7 @@ public class StorageService
         using var content = new StreamContent(fileStream);
         content.Headers.ContentType = new MediaTypeHeaderValue("image/png");
 
-        await _backend.PutAsync("/memes/" + name, content, cancellationToken);
+        var response = await _backend.PutAsync("/memes/" + name, content, cancellationToken);
+        response.EnsureSuccessStatusCode();
     }
 }

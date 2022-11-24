@@ -2,8 +2,6 @@ using storage;
 using Microsoft.EntityFrameworkCore;
 using OpenTelemetry.Trace;
 using OpenTelemetry.Metrics;
-using OpenTelemetry.Logs;
-using OpenTelemetry.Exporter;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,6 +26,7 @@ builder.Services.AddDbContext<MemeDbContext>(options =>
 ConfigureTelemetry(builder);
 
 var app = builder.Build();
+app.UseOpenTelemetryPrometheusScrapingEndpoint();
 
 using (var scope = app.Services.CreateScope())
 {
@@ -45,40 +44,16 @@ app.Run();
 
 static void ConfigureTelemetry(WebApplicationBuilder builder)
 {
-    var collectorEndpoint = builder.Configuration.GetSection("OtelCollector")?.GetValue<string>("Endpoint");
+    builder.Services.AddOpenTelemetryTracing(tracerProviderBuilder => tracerProviderBuilder
+        .AddJaegerExporter()
+        .AddHttpClientInstrumentation()
+        .AddAspNetCoreInstrumentation()
+        .AddEntityFrameworkCoreInstrumentation());
 
-    // if there no collector endpoint, we won't set up OpenTelemetry, but will configure log correlation using ActivityTrackingOptions
-    if (collectorEndpoint != null)
-    {
-        builder.Services.AddOpenTelemetryTracing(tracerProviderBuilder =>
-            tracerProviderBuilder.AddOtlpExporter(opt =>
-            {
-                opt.Protocol = OtlpExportProtocol.HttpProtobuf;
-                opt.Endpoint = new Uri(collectorEndpoint + "/v1/traces");
-            })
-            .AddHttpClientInstrumentation()
-            .AddAspNetCoreInstrumentation()
-            .AddEntityFrameworkCoreInstrumentation());
-
-        builder.Services.AddOpenTelemetryMetrics(meterProviderBuilder =>
-            meterProviderBuilder.AddOtlpExporter(opt =>
-            {
-                opt.Protocol = OtlpExportProtocol.HttpProtobuf;
-                opt.Endpoint = new Uri(collectorEndpoint + "/v1/traces");
-            })
-            .AddHttpClientInstrumentation()
-            .AddAspNetCoreInstrumentation());
-
-        builder.Logging.AddOpenTelemetry(options =>
-            options.AddOtlpExporter(opt =>
-            {
-                opt.Protocol = OtlpExportProtocol.HttpProtobuf;
-                opt.Endpoint = new Uri(collectorEndpoint + "/v1/traces");
-            }));
-    }
-    else
-    {
-        // log correlation is useful if you don't capture logs with OpenTelemetry
-        builder.Logging.Configure(options => options.ActivityTrackingOptions = ActivityTrackingOptions.TraceId | ActivityTrackingOptions.SpanId);
-    }
+    builder.Services.AddOpenTelemetryMetrics(meterProviderBuilder => meterProviderBuilder
+        .AddPrometheusExporter()
+        .AddHttpClientInstrumentation()
+        .AddAspNetCoreInstrumentation()
+        .AddProcessInstrumentation()
+        .AddRuntimeInstrumentation());
 }

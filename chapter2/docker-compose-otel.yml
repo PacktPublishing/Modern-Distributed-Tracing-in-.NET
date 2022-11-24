@@ -8,21 +8,26 @@ services:
       - "5051:5051"
     depends_on:
       - storage
+      - jaeger
+      - prometheus
     environment:
       - Storage__Endpoint=http://storage:5050
       - ASPNETCORE_URLS=http://+:5051
       - OTEL_SERVICE_NAME=frontend
-      - OtelCollector__Endpoint=http://otelcollector:4318
+      - OTEL_EXPORTER_JAEGER_AGENT_HOST=jaeger
   storage:
     build:
       context: ./
       dockerfile: ./storage/Dockerfile
+    depends_on:
+      - jaeger
+      - prometheus
     ports:
       - "5050:5050"
     environment:
       - ASPNETCORE_URLS=http://+:5050
       - OTEL_SERVICE_NAME=storage
-      - OtelCollector__Endpoint=http://otelcollector:4318
+      - OTEL_EXPORTER_JAEGER_AGENT_HOST=jaeger      
       # for demo purposes only, make sure to pass environment securely
       - ConnectionStrings__MySql=server=mysql;user=root;password=pwd;database=memes
   mysql:
@@ -34,20 +39,6 @@ services:
     environment:
       # for demo purposes only, make sure to pass environment securely
       - MYSQL_ROOT_PASSWORD=pwd
-  otelcollector:
-    image: otel/opentelemetry-collector-contrib
-    command: ["--config=/etc/otel-collector-config.yml", "--feature-gates=receiver.dockerstats.useScraperV2"]
-    ports:
-      - "8889:8889"   # Prometheus exporter metrics
-      - "13133:13133" # health_check extension
-      - "4317:4317"   # OTLP gRPC receiver
-      - "4318:4318"   # OTLP http receiver
-      - "55679:55679" # zpages extension
-    volumes:
-      - //var/run/docker.sock:/var/run/docker.sock
-      - ./configs/otel-collector-config.yml:/etc/otel-collector-config.yml
-    depends_on:
-      - jaeger
   jaeger:
     image: jaegertracing/all-in-one:latest
     ports:
@@ -63,8 +54,6 @@ services:
       - ./tmp/prometheus:/prometheus
     ports:
       - "9090:9090"
-    depends_on:
-      - otelcollector
       
 volumes:
   mysql_data:
