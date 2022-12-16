@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "tracing-with-net": {
+      "commandName": "Project",
+      "commandLineArgs": "open-telemetry --scenario event-samples"
+    }
+  }
+}
