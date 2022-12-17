@@ -7,7 +7,8 @@ using var tracerProvider = Sdk.CreateTracerProviderBuilder()
     .ConfigureResource(resourceBuilder => resourceBuilder.AddService("otel-api-sample"))
     .AddSource("Worker")
     .AddJaegerExporter()
+    .AddConsoleExporter()
     .Build()!;
 
 
-await Worker.DoWork(new WorkItem(1, "add_user"));
+await Worker.DoWork(1);

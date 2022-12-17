@@ -4,16 +4,14 @@ namespace links;
 
 public readonly struct WorkItem
 {
-    public WorkItem(int id, string command, ActivityContext context)
+    public WorkItem(int id, ActivityContext? context)
     {
         Id = id;
-        Command = command;
-        Context = context;
+        Context = context ?? default;
         CreatedTimeUtc = DateTime.UtcNow;
     }
 
     public int Id { get;}
-    public string Command { get;}
 
     public ActivityContext Context { get;}
 

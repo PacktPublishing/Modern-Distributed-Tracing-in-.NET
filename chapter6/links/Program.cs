@@ -17,9 +17,9 @@ var producer = new Producer(queue);
 var consumer = new BatchProcessor(queue);
 consumer.Start();
 
-producer.Enqueue(1, "add");
-producer.Enqueue(2, "update");
-producer.Enqueue(3, "delete");
+producer.Enqueue(1);
+producer.Enqueue(2);
+producer.Enqueue(3);
 
 await consumer.Stop();
 

@@ -16,8 +16,7 @@ public class OtherTests : IClassFixture<WebApplicationFactory<Program>>
     [Fact]
     public async Task GetDocument()
     {
-        // we just run some other tests to simulate how parallel tests execution 
-        // affects tests (generating multiple unrelated activities on the same processor)
+        // we just run some other tests to simulate parallel tests execution side-effects
         for (int  i = 0; i < 100; i ++)
         {
             await _client.GetAsync("/document/foo");

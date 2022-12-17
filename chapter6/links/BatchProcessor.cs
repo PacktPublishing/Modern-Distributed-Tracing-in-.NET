@@ -50,13 +50,9 @@ internal class BatchProcessor
         using var activity = Source.StartActivity(ActivityKind.Consumer, 
             links: items.Select(i => new ActivityLink(i.Context)));
 
-        if (activity?.IsAllDataRequested == true)
-        {
-            activity.SetTag("work_items.id", items.Select(i => i.Id).ToArray());
-            activity.SetTag("work_items.command", items.Select(i => i.Command).ToArray());
-            activity.SetTag("work_items.time_in_queue_ms", items.Select(i => GetTimeInQueue(i.CreatedTimeUtc)).ToArray());
-        }
-
+        // omitting activity?.IsAllDataRequested == true check for brevity
+        activity?.SetTag("work_items.id", items.Select(i => i.Id).ToArray());
+        activity?.SetTag("work_items.time_in_queue_ms", items.Select(i => GetTimeInQueue(i.CreatedTimeUtc)).ToArray());
 
         // process work items
         await Task.Delay(10);

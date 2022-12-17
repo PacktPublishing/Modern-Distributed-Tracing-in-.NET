@@ -42,7 +42,6 @@ internal class Processor
             TimeSpan timeInQueue = DateTimeOffset.UtcNow - item.CreatedTimeUtc;
             activity.SetTag("work_item.time_in_queue_ms", timeInQueue.TotalMilliseconds);
             activity.SetTag("work_item.id", item.Id);
-            activity.SetTag("work_item.command", item.Command);
         }
 
         await Task.Delay(10);

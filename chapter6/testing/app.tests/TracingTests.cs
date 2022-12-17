@@ -5,16 +5,17 @@ using Xunit;
 namespace app.tests;
 
 public class TracingTests
-    : IClassFixture<TracingTestsWebAppFactory>, IDisposable
+    : IClassFixture<TestFactory>, IDisposable
 {
     private readonly static ActivitySource TestSource = new("Test");
-    private readonly TracingTestsWebAppFactory _factory;
+    private readonly TestFactory _factory;
     private readonly Activity _testActivity;
     private readonly HttpClient _testClient;
 
-    public TracingTests(TracingTestsWebAppFactory factory)
+    public TracingTests(TestFactory factory)
     {
         _factory = factory;
+        _factory.Reset();
         _testClient = _factory.CreateClient();
         _testActivity = TestSource.StartActivity("test")!;
     }
@@ -27,7 +28,7 @@ public class TracingTests
     [Fact]
     public void CheckResource()
     {
-        var resource = TracingTestsWebAppFactory.Processor.Resource;
+        var resource = TestFactory.Processor.Resource;
         Assert.NotNull(resource);
         var serviceNameKvp = resource.Attributes.Single(s => s.Key == "service.name");
         Assert.Equal("testing-sample", serviceNameKvp.Value);
@@ -41,14 +42,14 @@ public class TracingTests
         var response = await _testClient.SendAsync(CreateGetRequest("/document/foo"));
 
         Assert.Equal("hi", await response.Content.ReadAsStringAsync());
-        var exportedActivities = GetRelatedActivities();
-        Assert.Equal(2, exportedActivities.Count);
+        var related = GetRelatedActivities();
+        Assert.Equal(2, related.Count);
 
-        CheckDocumentActivity(exportedActivities[0], "foo", "hi".Length, false, false);
+        CheckDocumentActivity(related[0], "foo", "hi".Length, false, false);
         // we know for sure that ASP.NET Core activity is the last to finish
-        CheckAspNetCoreActivity(exportedActivities[1], "GET", "/document/foo", 200);
-        Assert.Same(exportedActivities[0].Parent, exportedActivities[1]);
-        Assert.Equal(_testActivity.Id, exportedActivities[1].ParentId);
+        CheckAspNetCoreActivity(related[1], "GET", "/document/foo", 200);
+        Assert.Same(related[0].Parent, related[1]);
+        Assert.Equal(_testActivity.Id, related[1].ParentId);
     }
     
     [Fact]
@@ -60,11 +61,11 @@ public class TracingTests
         request.Headers.Add("traceparent", testActivity.Id);
         var response = await _testClient.SendAsync(request);
        
-        var related = TracingTestsWebAppFactory.Processor.ProcessedActivities
-            .Where(a => a.TraceId == _testActivity.TraceId).ToList();
+        var related = TestFactory.Processor.ProcessedActivities
+            .Where(a => a.TraceId == _testActivity.TraceId).ToArray();
 
         // testActivity is still running, so we don't see it here
-        Assert.Equal(2, related.Count);
+        Assert.Equal(2, related.Length);
 
         var document = related[0];
         var httpIn = related[1];
@@ -89,11 +90,11 @@ public class TracingTests
         var response = await _testClient.SendAsync(CreateGetRequest("/document/foo"));
         Assert.Equal(404, (int)response.StatusCode);
 
-        var exportedActivities = GetRelatedActivities();
-        Assert.Equal(2, exportedActivities.Count);
+        var related = GetRelatedActivities();
+        Assert.Equal(2, related.Count);
 
-        CheckDocumentActivity(exportedActivities[0], "foo", null, false, false);
-        CheckAspNetCoreActivity(exportedActivities[1], "GET", "/document/foo", 404);
+        CheckDocumentActivity(related[0], "foo", null, false, false);
+        CheckAspNetCoreActivity(related[1], "GET", "/document/foo", 404);
     }
 
     [Fact]
@@ -102,11 +103,11 @@ public class TracingTests
         var response = await _testClient.SendAsync(CreateGetRequest("/document/throw"));
         Assert.Equal(500, (int)response.StatusCode);
 
-        var exportedActivities = GetRelatedActivities();
-        Assert.Equal(2, exportedActivities.Count);
+        var related = GetRelatedActivities();
+        Assert.Equal(2, related.Count);
 
-        CheckDocumentActivity(exportedActivities[0], "throw", null, false, true);
-        CheckAspNetCoreActivity(exportedActivities[1], "GET", "/document/throw", 500);
+        CheckDocumentActivity(related[0], "throw", null, false, true);
+        CheckAspNetCoreActivity(related[1], "GET", "/document/throw", 500);
     }
 
     [Fact]
@@ -117,11 +118,11 @@ public class TracingTests
         var response = await _testClient.SendAsync(CreateGetRequest("/document/foo"));
         Assert.Equal(200, (int)response.StatusCode);
 
-        var exportedActivities = GetRelatedActivities();
-        Assert.Equal(2, exportedActivities.Count);
+        var related = GetRelatedActivities();
+        Assert.Equal(2, related.Count);
 
-        CheckDocumentActivity(exportedActivities[0], "foo", "bar".Length, true, false);
-        CheckAspNetCoreActivity(exportedActivities[1], "GET", "/document/foo", 200);
+        CheckDocumentActivity(related[0], "foo", "bar".Length, true, false);
+        CheckAspNetCoreActivity(related[1], "GET", "/document/foo", 200);
     }
 
     private static void CheckAspNetCoreActivity(Activity actual, string httpMethod, string target, int statusCode)
@@ -161,7 +162,7 @@ public class TracingTests
 
     private List<Activity> GetRelatedActivities()
     {
-        var allExported = TracingTestsWebAppFactory.Processor.ProcessedActivities;
+        var allExported = TestFactory.Processor.ProcessedActivities;
 
         // with parallel test execution, we'll get exported activities from all tests
         // so we need to filter only to sucessors of our activity.

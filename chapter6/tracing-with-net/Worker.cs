@@ -33,6 +33,7 @@ internal class Worker
     public static async Task DoWorkWithBasicTracing(int workItemId)
     {
         using var activity = Source.StartActivity("DoWork");
+        activity?.SetTag("work_item.id", workItemId);
         try
         {
             await DoWorkImpl(workItemId);

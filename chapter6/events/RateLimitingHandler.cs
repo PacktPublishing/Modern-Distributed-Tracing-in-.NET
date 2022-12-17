@@ -34,11 +34,9 @@ class RateLimitingHandler : DelegatingHandler
             var work = Activity.Current;
             if (work?.IsAllDataRequested == true)
             {
-                var tags = new ActivityTagsCollection()
-                {
-                    { "exception.type", "rate_is_limited" },
-                    { "retry_after_ms", retryAfter.TotalMilliseconds }
-                };
+                var tags = new ActivityTagsCollection();
+                tags.Add("exception.type", "rate_is_limited");
+                tags.Add("retry_after_ms", retryAfter.TotalMilliseconds);
 
                 work?.AddEvent(new ActivityEvent("exception", tags: tags));
             }

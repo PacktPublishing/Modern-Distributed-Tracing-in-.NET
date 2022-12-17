@@ -22,7 +22,7 @@ await command.InvokeAsync(args);
 
 static async Task RunOTelExample(string scenario)
 {
-    using var tracerProvider = Sdk.CreateTracerProviderBuilder()
+    using var provider = Sdk.CreateTracerProviderBuilder()
         .ConfigureResource(b => b.AddService("activity-sample"))
         .AddSource("Worker")
         .AddJaegerExporter()

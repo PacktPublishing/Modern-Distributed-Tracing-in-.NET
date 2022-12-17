@@ -12,15 +12,11 @@ internal class Producer
         _queue = queue;
     }
 
-    public void Enqueue(int id, string command)
+    public void Enqueue(int id)
     {
-        using var activity = Source.StartActivity(ActivityKind.Producer);
-        if (activity?.IsAllDataRequested == true)
-        {
-            activity.SetTag("work_item.id", id);
-            activity.SetTag("work_item.command", command);
-        }
+        using var enqueue = Source.StartActivity(ActivityKind.Producer)?
+            .SetTag("work_item.id", id);
         
-        _queue.Enqueue(new WorkItem(id, command, activity?.Context ?? default));
+        _queue.Enqueue(new WorkItem(id, enqueue?.Context));
     }
 }
