@@ -7,18 +7,17 @@ internal class Worker
 {
     private static readonly ActivitySource Source = new ("Worker");
 
-    public static async Task DoWork(WorkItem work)
+    public static async Task DoWork(int workItemId)
     {
         using var workActivity = Source.StartActivity();
-        workActivity?.AddTag("work_item.id", work.Id);
-        workActivity?.AddTag("work_item.command", work.Command);
+        workActivity?.AddTag("work_item.id", workItemId);
 
         await DoWithRetry(async tryNumber =>
         {
             using var tryActivity = Source.StartActivity("Try");
             try
             {
-                await DoWorkImpl(work.Id, tryNumber);
+                await DoWorkImpl(workItemId, tryNumber);
                 tryActivity?.SetTag("try_count", tryNumber);
             }
             catch (Exception ex)

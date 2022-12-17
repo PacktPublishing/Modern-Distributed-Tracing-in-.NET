@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics;
-using System.Globalization;
 using System.Net;
 using System.Threading.RateLimiting;
 
@@ -15,10 +14,6 @@ class RateLimitingHandler : DelegatingHandler
     };
 
     private readonly TokenBucketRateLimiter _rateLimiter = new (Options);
-
-    public RateLimitingHandler() : base(new SocketsHttpHandler())
-    {
-    }
 
     protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage req, CancellationToken ct)
     {
@@ -43,5 +38,9 @@ class RateLimitingHandler : DelegatingHandler
             res.Headers.Add("Retry-After", ((int)retryAfter.TotalSeconds).ToString());
         }
         return res;
+    }
+
+    public RateLimitingHandler() : base(new SocketsHttpHandler())
+    {
     }
 }

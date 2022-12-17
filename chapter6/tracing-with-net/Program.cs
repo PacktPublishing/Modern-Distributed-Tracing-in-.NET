@@ -35,7 +35,7 @@ static async Task RunOTelExample(string scenario)
     }
     else if (scenario == "with-retries")
     {
-        await Worker.DoWork(new WorkItem(2, "add_user"));
+        await Worker.DoWork(2);
     }
     else if (scenario == "start-samples")
     { 
@@ -64,14 +64,3 @@ static void PrintActivity(Activity activity)
 {
     Console.WriteLine($"{activity.DisplayName}: Id = {activity.Id}, Duration={activity.Duration.TotalMilliseconds}ms, Status = {activity.Status}");
 }
-
-
-/*var queue = new WorkQueue();
-
-queue.Start();
-
-queue.TryEnqueue(new WorkItem(workItemId++, "Sasha", "create"));
-queue.TryEnqueue(new WorkItem(workItemId++, "Nick", "update"));
-
-await queue.Stop();
-tracerProvider.Shutdown();*/

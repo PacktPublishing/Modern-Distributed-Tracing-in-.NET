@@ -57,11 +57,6 @@ internal class StartSamples
         await DoWork();
     }
 
-    private static async Task DoWork()
-    {
-        await Task.Delay(TimeSpan.FromMilliseconds(10));
-    }
-
     private static string GetValue()
     {
         var sb = new StringBuilder();
@@ -72,6 +67,11 @@ internal class StartSamples
           .Append("operation");
 
         return sb.ToString();
+    }
+
+    private static async Task DoWork()
+    {
+        await Task.Delay(TimeSpan.FromMilliseconds(10));
     }
 
 }
