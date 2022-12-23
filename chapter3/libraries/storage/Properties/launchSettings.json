@@ -7,7 +7,6 @@
         "OTEL_SERVICE_NAME": "storage",
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
-      "hotReloadEnabled": false,
       "applicationUrl": "http://localhost:5050",
       "dotnetRunMessages": true
     }

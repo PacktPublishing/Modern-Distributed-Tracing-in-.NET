@@ -10,7 +10,7 @@ services:
       - Storage__Endpoint=${LAMBDA_ENDPOINT}
       - ASPNETCORE_URLS=http://+:5051
       - OTEL_SERVICE_NAME=frontend
-      - OtelCollector__Endpoint=http://awsotelcollector:4318
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://awsotelcollector:4318
   awsotelcollector:
     image: public.ecr.aws/aws-observability/aws-otel-collector:latest
     command: ["--config=/etc/otel-collector-config.yml"]

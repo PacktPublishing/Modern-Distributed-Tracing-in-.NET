@@ -32,5 +32,4 @@ app.MapControllers();
 app.Run();
 
 public partial class Program {
-    static bool SubscribedToSources = false;
 }

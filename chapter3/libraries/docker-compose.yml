@@ -8,11 +8,12 @@ services:
       - "5051:5051"
     depends_on:
       - storage
+      - otelcollector
     environment:
       - Storage__Endpoint=http://storage:5050
       - ASPNETCORE_URLS=http://+:5051
       - OTEL_SERVICE_NAME=frontend
-      - OtelCollector__Endpoint=http://otelcollector:4318
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://otelcollector:4317
   storage:
     build:
       context: ./
@@ -21,10 +22,11 @@ services:
       - "5050:5050"
     depends_on:
       - redis
+      - otelcollector
     environment:
       - ASPNETCORE_URLS=http://+:5050
       - OTEL_SERVICE_NAME=storage
-      - OtelCollector__Endpoint=http://otelcollector:4318
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://otelcollector:4317
       # for demo purposes only, make sure to pass environment securely
       - CloudStorage__AzureBlob__ConnectionString=${AZURE_BLOB_CONNECTION_STRING}
       - Redis__ConnectionString=redis:6379

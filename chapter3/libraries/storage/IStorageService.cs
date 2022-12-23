@@ -1,9 +1,8 @@
-﻿namespace storage
-{
-    public interface IStorageService
-    {
-        Task<Stream> ReadAsync(string id, CancellationToken cancellationToken);
+﻿namespace storage;
 
-        Task WriteAsync(string id, Stream data, CancellationToken cancellationToken);
-    }
+public interface IStorageService
+{
+    Task<Stream> ReadAsync(string id, CancellationToken cancellationToken);
+
+    Task WriteAsync(string id, Stream data, CancellationToken cancellationToken);
 }

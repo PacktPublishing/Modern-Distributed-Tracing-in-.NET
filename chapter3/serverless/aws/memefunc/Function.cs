@@ -27,7 +27,7 @@ public class Function
             .AddOtlpExporter()
             .AddAWSInstrumentation(opt => opt.SuppressDownstreamInstrumentation = false)
             .AddHttpClientInstrumentation()
-            .Build();
+            .Build()!;
         Client = new AmazonS3Client(Amazon.RegionEndpoint.USWest2);
     }
 
@@ -54,7 +54,7 @@ public class Function
         };
     }
 
-    private async Task<APIGatewayProxyResponse> Download(string name)
+    private static async Task<APIGatewayProxyResponse> Download(string name)
     {
         var downloadRequest = new GetObjectRequest
         {
@@ -75,7 +75,8 @@ public class Function
         };
     }
 
-    private async Task<APIGatewayProxyResponse> Upload(string name, string content)
+
+    private static async Task<APIGatewayProxyResponse> Upload(string name, string content)
     {
         using var memoryStream = new MemoryStream(Convert.FromBase64String(content));
 

@@ -1,12 +1,12 @@
 using storage;
 using OpenTelemetry.Trace;
-using OpenTelemetry.Exporter;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Logs;
 using StackExchange.Redis;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Caching.StackExchangeRedis;
+using OpenTelemetry;
 
 AppContext.SetSwitch("Azure.Experimental.EnableActivitySource", true);
 
@@ -81,42 +81,23 @@ static IConnectionMultiplexer ConfigureRedis(WebApplicationBuilder builder)
 
 static void ConfigureTelemetry(WebApplicationBuilder builder, IConnectionMultiplexer redisConnection)
 {
-    var collectorEndpoint = builder.Configuration.GetSection("OtelCollector")?.GetValue<string>("Endpoint");
-    if (collectorEndpoint == null)
-    {
-        return;
-    }
+    builder.Services.AddOpenTelemetry()
+        .WithTracing(tracerProviderBuilder => tracerProviderBuilder
+            // enable redis instrumentation - it needs connection instance
+            .AddRedisInstrumentation(redisConnection, o => o.SetVerboseDatabaseStatements = true)
+            // enable AWS instrumentation
+            .AddAWSInstrumentation(o => o.SuppressDownstreamInstrumentation = true)
+            // enable Azure SDK instrumentation
+            .AddSource("Azure.*")
+            .AddOtlpExporter()
+            .AddHttpClientInstrumentation()
+            .AddAspNetCoreInstrumentation())
+        .WithMetrics(meterProviderBuilder => meterProviderBuilder
+            .AddOtlpExporter()
+            .AddHttpClientInstrumentation()
+            .AddAspNetCoreInstrumentation())
+        .StartWithHost();
 
-    builder.Services.AddOpenTelemetryTracing(tracerProviderBuilder =>
-    {
-        tracerProviderBuilder.AddOtlpExporter(o =>
-        {
-            o.Protocol = OtlpExportProtocol.HttpProtobuf;
-            o.Endpoint = new Uri(collectorEndpoint + "/v1/traces");
-        })
-        .AddHttpClientInstrumentation()
-        .AddAspNetCoreInstrumentation()
-        // enable redis instrumentation - it needs connection instance
-        .AddRedisInstrumentation(redisConnection, o => o.SetVerboseDatabaseStatements = true)
-        // enable Azure SDK instrumentation
-        .AddSource("Azure.*")
-        // enable AWS instrumentation
-        .AddAWSInstrumentation(o => o.SuppressDownstreamInstrumentation = true);
-    });
-
-    builder.Services.AddOpenTelemetryMetrics(meterProviderBuilder =>
-        meterProviderBuilder.AddOtlpExporter(o =>
-        {
-            o.Protocol = OtlpExportProtocol.HttpProtobuf;
-            o.Endpoint = new Uri(collectorEndpoint + "/v1/metrics");
-        })
-        .AddHttpClientInstrumentation()
-        .AddAspNetCoreInstrumentation());
-
-    builder.Logging.AddOpenTelemetry(opt =>
-        opt.AddOtlpExporter(o =>
-        {
-            o.Protocol = OtlpExportProtocol.HttpProtobuf;
-            o.Endpoint = new Uri(collectorEndpoint + "/v1/logs");
-        }));
+    builder.Logging.AddOpenTelemetry(options =>
+        options.AddOtlpExporter());
 }

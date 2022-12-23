@@ -19,10 +19,13 @@ class RateLimitingHandler : DelegatingHandler
     {
         using var lease = _rateLimiter.AttemptAcquire();
         if (lease.IsAcquired)
-        {
             return await base.SendAsync(req, ct);
-        }
 
+        return Throttle(lease);
+    }
+
+    private HttpResponseMessage Throttle(RateLimitLease lease)
+    {
         var res = new HttpResponseMessage(HttpStatusCode.TooManyRequests);
         if (lease.TryGetMetadata(MetadataName.RetryAfter, out var retryAfter))
         {

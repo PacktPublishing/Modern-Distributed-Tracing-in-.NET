@@ -1,16 +1,14 @@
 using frontend;
 using OpenTelemetry;
 using OpenTelemetry.Contrib.Extensions.AWSXRay.Trace;
-using OpenTelemetry.Exporter;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
-using System.Diagnostics;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
 
-var storageEndpoint = builder.Configuration.GetSection("Storage").GetValue<string>("Endpoint");
+var storageEndpoint = builder.Configuration.GetSection("Storage").GetValue<string>("Endpoint") ?? "http://localhost:5050";
 builder.Services.AddHttpClient("storage", httpClient =>
 {
     httpClient.BaseAddress = new Uri(storageEndpoint);
@@ -31,13 +29,6 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-// return context to the caller with W3C traceresponse (draft specification)
-app.Use(async (ctx, next) =>
-{
-    ctx.Response.Headers.Add("traceresponse", Activity.Current?.Id);
-    await next.Invoke();
-});
-
 app.UseStaticFiles();
 
 app.UseRouting();
@@ -48,22 +39,14 @@ app.Run();
 
 static void ConfigureTelemetry(WebApplicationBuilder builder)
 {
-    var collectorEndpoint = builder.Configuration.GetSection("OtelCollector")?.GetValue<string>("Endpoint");
-    if (collectorEndpoint == null)
-    {
-        return;
-    }
-
     Sdk.SetDefaultTextMapPropagator(new AWSXRayPropagator());
     
-    builder.Services.AddOpenTelemetryTracing(tracerProviderBuilder => 
-        tracerProviderBuilder
-            .AddXRayTraceId()
-            .AddOtlpExporter(opt =>
-            {
-                opt.Protocol = OtlpExportProtocol.HttpProtobuf;
-                opt.Endpoint = new Uri(collectorEndpoint + "/v1/traces");
-            })
-            .AddHttpClientInstrumentation()
-            .AddAspNetCoreInstrumentation());
+    builder.Services.AddOpenTelemetry()
+        .WithTracing(tracerProviderBuilder => 
+            tracerProviderBuilder
+                .AddXRayTraceId()
+                .AddOtlpExporter()
+                .AddHttpClientInstrumentation()
+                .AddAspNetCoreInstrumentation())
+        .StartWithHost();
 }

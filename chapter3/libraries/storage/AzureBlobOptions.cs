@@ -1,8 +1,7 @@
-﻿namespace storage
+﻿namespace storage;
+
+public class AzureBlobOptions
 {
-    public class AzureBlobOptions
-    {
-        public string? ConnectionString { get; set; }
-        public string? Container { get; set; }
-    }
+    public string? ConnectionString { get; set; }
+    public string? Container { get; set; }
 }

@@ -10,12 +10,13 @@ services:
       - "8887:9090"
     depends_on:
       - storage
-      - placement      
+      - placement
+      - otelcollector      
     environment:
       - ASPNETCORE_URLS=http://+:5051
       - OTEL_SERVICE_NAME=frontend
-      - Storage__Endpoint=http://storage:5050
-      - OtelCollector__Endpoint=http://otelcollector:4318
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://otelcollector:4317
+      - Storage__Endpoint=http://storage:5050      
   frontend-dapr:
     image: "daprio/daprd:edge"
     command: [ "./daprd",
@@ -38,10 +39,11 @@ services:
       - "8886:9090"      
     depends_on:
       - placement
+      - otelcollector
     environment:
       - ASPNETCORE_URLS=http://+:5050
       - OTEL_SERVICE_NAME=storage
-      - OtelCollector__Endpoint=http://otelcollector:4318
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://otelcollector:4317
   storage-dapr:
     image: "daprio/daprd:edge"
     command: [ "./daprd", 

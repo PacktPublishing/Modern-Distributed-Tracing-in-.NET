@@ -1,10 +1,10 @@
 using storage;
 using OpenTelemetry.Trace;
-using OpenTelemetry.Exporter;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Logs;
 using Microsoft.Extensions.Options;
 using System.Net.Http.Headers;
+using OpenTelemetry;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -50,36 +50,23 @@ static void ConfigureCloudStorage(WebApplicationBuilder builder)
 
 static void ConfigureTelemetry(WebApplicationBuilder builder)
 {
-    var collectorEndpoint = builder.Configuration.GetSection("OtelCollector")?.GetValue<string>("Endpoint");
+    var collectorEndpoint = Environment.GetEnvironmentVariable("OTEL_EXPORTER_OTLP_ENDPOINT");
     if (collectorEndpoint == null) 
     {
         return;
     }
 
-    builder.Services.AddOpenTelemetryTracing(tracerProviderBuilder =>
-    {
-        tracerProviderBuilder.AddOtlpExporter(opt =>
-        {
-            opt.Protocol = OtlpExportProtocol.HttpProtobuf;
-            opt.Endpoint = new Uri(collectorEndpoint + "/v1/traces");
-        })
-        .AddHttpClientInstrumentation()
-        .AddAspNetCoreInstrumentation();
-    });
-
-    builder.Services.AddOpenTelemetryMetrics(meterProviderBuilder =>
-        meterProviderBuilder.AddOtlpExporter(opt =>
-        {
-            opt.Protocol = OtlpExportProtocol.HttpProtobuf;
-            opt.Endpoint = new Uri(collectorEndpoint + "/v1/metrics");
-        })
-        .AddHttpClientInstrumentation()
-        .AddAspNetCoreInstrumentation());
+    builder.Services.AddOpenTelemetry()
+        .WithTracing(tracerProviderBuilder => tracerProviderBuilder
+            .AddOtlpExporter()
+            .AddHttpClientInstrumentation()
+            .AddAspNetCoreInstrumentation())
+        .WithMetrics(meterProviderBuilder => meterProviderBuilder
+            .AddOtlpExporter()
+            .AddHttpClientInstrumentation()
+            .AddAspNetCoreInstrumentation())
+        .StartWithHost();
 
     builder.Logging.AddOpenTelemetry(options =>
-        options.AddOtlpExporter(opt =>
-        {
-            opt.Protocol = OtlpExportProtocol.HttpProtobuf;
-            opt.Endpoint = new Uri(collectorEndpoint + "/v1/logs");
-        }));
+        options.AddOtlpExporter());
 }
