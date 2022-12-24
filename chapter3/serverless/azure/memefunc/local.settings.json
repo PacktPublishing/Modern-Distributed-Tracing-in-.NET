@@ -2,8 +2,8 @@
   "IsEncrypted": false,
   "Values": {
     "ASPNETCORE_ENVIRONMENT": "Development",
-    "FUNCTIONS_WORKER_RUNTIME": "dotnet",
-    "AzureWebJobsStorage": "Azure blob storage connection string",
-    "APPLICATIONINSIGHTS_CONNECTION_STRING": "Application Insights connection string"
+    "FUNCTIONS_WORKER_RUNTIME": "dotnet-isolated",
+    "AzureWebJobsStorage": "DefaultEndpointsProtocol=https;AccountName=<accounts>;AccountKey=<key>;EndpointSuffix=core.windows.net",
+    "APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=<key>;IngestionEndpoint=<endpoint>"
   }
 }

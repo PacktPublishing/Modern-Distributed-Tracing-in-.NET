@@ -1,31 +1,30 @@
-using System.Diagnostics;
-using System.IO;
-using System.Threading.Tasks;
-using Azure.Storage.Blobs;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.Http;
+using System.Net;
+using Microsoft.Azure.Functions.Worker;
+using Microsoft.Azure.Functions.Worker.Http;
 
-namespace memefunc
+namespace memefunc;
+
+public class Storage
 {
-    public class Storage
+    [Function("storage-upload")]
+    [BlobOutput("memes/{name}")]
+    public static async Task<byte[]> Upload([HttpTrigger(AuthorizationLevel.Function, "put", Route = "memes/{name}")] HttpRequestData request)
     {
-        [FunctionName("storage-upload")]
-        public async Task Upload([HttpTrigger(AuthorizationLevel.Function, "put", Route = "memes/{name}")] HttpRequest request,
-            [Blob("memes/{name}", FileAccess.Write)] Stream output)
-        {
-            await request.Body.CopyToAsync(output);
-        }
+        using var output = new MemoryStream();
+        await request.Body.CopyToAsync(output);
 
-        [FunctionName("storage-download")]
-        public async Task<ActionResult> Run([HttpTrigger(AuthorizationLevel.Function, "get", Route = "memes/{name}")] HttpRequest request,
-            [Blob("memes/{name}", FileAccess.Read)] Stream input)
-        {
-            var response = new MemoryStream();
-            await input.CopyToAsync(response);
-            response.Position = 0;
-            return new FileStreamResult(response, "image/png");
-        }
+        output.Position = 0;
+        return output.ToArray();
+    }
+
+    [Function("storage-download")]
+    public static HttpResponseData Run([HttpTrigger(AuthorizationLevel.Function, "get", Route = "memes/{name}")] HttpRequestData request,
+        [BlobInput("memes/{name}")] byte[] input)
+    {
+        var response = request.CreateResponse(HttpStatusCode.OK);
+        response.Body = new MemoryStream(input);
+        response.Headers.Add("Content-Type", "image/png");
+
+        return response;
     }
 }
