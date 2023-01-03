@@ -1,0 +1,51 @@
+version: "3.9"
+services:
+  app:
+    build:
+      context: ./
+      dockerfile: ./Dockerfile
+    depends_on:
+      - otelcollector
+    environment:
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://otelcollector:4317
+      - OTEL_SERVICE_NAME=metrics
+      - OTEL_METRIC_EXPORT_INTERVAL=5000
+  otelcollector:
+    image: otel/opentelemetry-collector-contrib
+    command: ["--config=/etc/otel-collector-config.yml"]
+    ports:
+      - "8889:8889"   # Prometheus exporter metrics
+      - "13133:13133" # health_check extension
+      - "4317:4317"   # OTLP gRPC receiver
+      - "4318:4318"   # OTLP http receiver
+      - "55679:55679" # zpages extension
+    volumes:
+      - //var/run/docker.sock:/var/run/docker.sock
+      - ./configs/otel-collector-config.yml:/etc/otel-collector-config.yml
+    depends_on:
+      - jaeger
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    ports:
+      - "14250:14250"
+      - "14268:14268"
+      - "6831:6831/udp"
+      - "16686:16686"
+      - "16685:16685"
+  prometheus:
+    image: prom/prometheus:latest
+    volumes:
+      - ./configs/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./tmp/prometheus:/prometheus
+    ports:
+      - "9090:9090"
+    depends_on:
+      - otelcollector
+  grafana:
+    image: grafana/grafana-oss
+    ports:
+      - "3001:3000"
+    depends_on:
+      - prometheus
+    volumes:
+      - ./tmp/grafana:/var/lib/grafana

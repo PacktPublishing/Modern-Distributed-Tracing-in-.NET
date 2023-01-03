@@ -1,0 +1,11 @@
+{
+  "profiles": {
+    "metrics": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "OTEL_METRIC_EXPORT_INTERVAL": "5000",
+        "OTEL_SERVICE_NAME" : "metrics"
+      }
+    }
+  }
+}
