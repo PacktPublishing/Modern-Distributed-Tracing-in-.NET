@@ -11,7 +11,7 @@ using var tracerProvider = Sdk.CreateTracerProviderBuilder()
     .Build()!;
 using var meterProvider = Sdk.CreateMeterProviderBuilder()
     .AddMeter("queue.*")
-    .AddConsoleExporter()
+    //.AddConsoleExporter()
     .AddOtlpExporter()
     .Build()!;
 

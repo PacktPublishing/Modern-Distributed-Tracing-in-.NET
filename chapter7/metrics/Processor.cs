@@ -59,8 +59,6 @@ internal class Processor : IDisposable
     {
         _seqNo = item.SequenceNumber;
 
-        //Console.WriteLine($"Processing work item {item.SequenceNumber} from queue '{_queueName}'");
-
         using var activity = Source.StartActivity(ActivityKind.Consumer, item.Context);
         if (activity?.IsAllDataRequested == true)
         {
@@ -82,6 +80,7 @@ internal class Processor : IDisposable
 
     private async Task<ProcessingStatus> Process(WorkItem item)
     {
+        Console.WriteLine($"Processing work item {item.SequenceNumber} from queue '{_queueName}'");
         await Task.Delay(GetDelay());
 
         if (item.SequenceNumber % 7 == 0)

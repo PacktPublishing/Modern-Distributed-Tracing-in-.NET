@@ -512,9 +512,8 @@
           },
           "editorMode": "code",
           "expr": "sum by (queue) (rate(queue_enqueued_count[5m]))",
-          "instant": true,
-          "key": "Q-5ce38c2c-cda2-4651-ad50-d8e3935ced1f-0",
-          "legendFormat": "{{queue}}",
+          "hide": false,
+          "legendFormat": "__auto",
           "range": true,
           "refId": "A"
         }
@@ -537,6 +536,6 @@
   "timezone": "",
   "title": "Metrics sample",
   "uid": "A1vurtpVz",
-  "version": 4,
+  "version": 5,
   "weekStart": ""
 }

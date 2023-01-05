@@ -41,11 +41,4 @@ services:
       - "9090:9090"
     depends_on:
       - otelcollector
-  grafana:
-    image: grafana/grafana-oss
-    ports:
-      - "3001:3000"
-    depends_on:
-      - prometheus
-    volumes:
-      - ./tmp/grafana:/var/lib/grafana
+  
