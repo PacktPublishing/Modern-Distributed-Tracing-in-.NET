@@ -1,0 +1,54 @@
+version: "3.9"
+services:
+  frontend:
+    build:
+      context: ./
+      dockerfile: ./frontend/Dockerfile
+    ports:
+      - "5051:5051"
+    depends_on:
+      - storage
+      - otelcollector
+    environment:
+      - Storage__Endpoint=http://storage:5050
+      - ASPNETCORE_URLS=http://+:5051
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://otelcollector:4317
+      - OTEL_SERVICE_NAME=frontend
+  storage:
+    build:
+      context: ./
+      dockerfile: ./storage/Dockerfile
+    ports:
+      - "5050:5050"
+    depends_on:
+      - otelcollector
+    environment:
+      - ASPNETCORE_URLS=http://+:5050
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://otelcollector:4317
+      - OTEL_SERVICE_NAME=storage
+  otelcollector:
+    image: otel/opentelemetry-collector-contrib-dev  #TODO - tag and exavt version here
+    command: ["--config=/etc/otel-collector-config.yml"]
+    ports:
+      - "4317:4317"   # OTLP gRPC receiver
+    volumes:
+      - //var/run/docker.sock:/var/run/docker.sock
+      - ./configs/otel-collector-config.yml:/etc/otel-collector-config.yml
+      - ./tmp/logs:/tmp/otelcol/logs
+    depends_on:
+      - jaeger
+      - clickhouse
+    restart: on-failure      
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    ports:
+      - "14250:14250"
+      - "14268:14268"
+      - "6831:6831/udp"
+      - "16686:16686"
+      - "16685:16685"
+  clickhouse:
+    image: clickhouse/clickhouse-server:latest
+    ports:
+      - "9000:9000"
+      - "8123:8123"

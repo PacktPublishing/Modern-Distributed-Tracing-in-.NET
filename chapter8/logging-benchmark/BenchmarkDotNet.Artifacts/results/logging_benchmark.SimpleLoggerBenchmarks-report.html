@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+<meta charset='utf-8' />
+<title>logging_benchmark.SimpleLoggerBenchmarks-20230116-183457</title>
+
+<style type="text/css">
+	table { border-collapse: collapse; display: block; width: 100%; overflow: auto; }
+	td, th { padding: 6px 13px; border: 1px solid #ddd; text-align: right; }
+	tr { background-color: #fff; border-top: 1px solid #ccc; }
+	tr:nth-child(even) { background: #f8f8f8; }
+</style>
+</head>
+<body>
+<pre><code>
+BenchmarkDotNet=v0.13.4, OS=Windows 11 (10.0.22621.1105)
+12th Gen Intel Core i9-12900KF, 1 CPU, 24 logical and 16 physical cores
+.NET SDK=7.0.102
+  [Host]     : .NET 7.0.2 (7.0.222.60605), X64 RyuJIT AVX2
+  DefaultJob : .NET 7.0.2 (7.0.222.60605), X64 RyuJIT AVX2
+</code></pre>
+<pre><code></code></pre>
+
+<table>
+<thead><tr><th>                               Method</th><th>Mean</th><th>Error</th><th>StdDev</th><th>Gen0</th><th>Allocated</th>
+</tr>
+</thead><tbody><tr><td>EnabledLogWarningNoParams</td><td>21.274 ns</td><td>0.1217 ns</td><td>0.1079 ns</td><td>-</td><td>-</td>
+</tr><tr><td>DisabledLogInformationNoParams</td><td>14.053 ns</td><td>0.0903 ns</td><td>0.0845 ns</td><td>-</td><td>-</td>
+</tr><tr><td>EnabledLogWarningWithParams</td><td>32.858 ns</td><td>0.3210 ns</td><td>0.3002 ns</td><td>0.0025</td><td>40 B</td>
+</tr><tr><td>DisbledLogInformationWithParams</td><td>30.686 ns</td><td>0.4553 ns</td><td>0.4259 ns</td><td>0.0025</td><td>40 B</td>
+</tr><tr><td>EnabledLogWarningWithParamsCalculation</td><td>44.509 ns</td><td>0.6509 ns</td><td>0.6089 ns</td><td>0.0066</td><td>104 B</td>
+</tr><tr><td>DisabledLogInformationWithParamsCalculation</td><td>37.737 ns</td><td>0.7501 ns</td><td>0.7017 ns</td><td>0.0066</td><td>104 B</td>
+</tr><tr><td>DisabledLogInformationWithEnabledCheck</td><td>3.421 ns</td><td>0.0315 ns</td><td>0.0295 ns</td><td>-</td><td>-</td>
+</tr></tbody></table>
+</body>
+</html>

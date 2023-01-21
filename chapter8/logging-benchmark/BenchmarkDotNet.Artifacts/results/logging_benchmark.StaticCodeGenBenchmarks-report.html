@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+<meta charset='utf-8' />
+<title>logging_benchmark.StaticCodeGenBenchmarks-20230116-183724</title>
+
+<style type="text/css">
+	table { border-collapse: collapse; display: block; width: 100%; overflow: auto; }
+	td, th { padding: 6px 13px; border: 1px solid #ddd; text-align: right; }
+	tr { background-color: #fff; border-top: 1px solid #ccc; }
+	tr:nth-child(even) { background: #f8f8f8; }
+</style>
+</head>
+<body>
+<pre><code>
+BenchmarkDotNet=v0.13.4, OS=Windows 11 (10.0.22621.1105)
+12th Gen Intel Core i9-12900KF, 1 CPU, 24 logical and 16 physical cores
+.NET SDK=7.0.102
+  [Host]     : .NET 7.0.2 (7.0.222.60605), X64 RyuJIT AVX2
+  DefaultJob : .NET 7.0.2 (7.0.222.60605), X64 RyuJIT AVX2
+</code></pre>
+<pre><code></code></pre>
+
+<table>
+<thead><tr><th>                  Method</th><th>Mean</th><th>Error</th><th>StdDev</th><th>Gen0</th><th>Allocated</th>
+</tr>
+</thead><tbody><tr><td>EnabledLogWarining</td><td>34.136 ns</td><td>0.5452 ns</td><td>0.5100 ns</td><td>0.0041</td><td>64 B</td>
+</tr><tr><td>DisabledLogInformation</td><td>28.874 ns</td><td>0.4351 ns</td><td>0.3857 ns</td><td>0.0041</td><td>64 B</td>
+</tr><tr><td>EnabledSourceGeneratedLogWarn</td><td>26.010 ns</td><td>0.1316 ns</td><td>0.1231 ns</td><td>-</td><td>-</td>
+</tr><tr><td>DisabledSourceGeneratedLogInfo</td><td>3.389 ns</td><td>0.0251 ns</td><td>0.0235 ns</td><td>-</td><td>-</td>
+</tr></tbody></table>
+</body>
+</html>

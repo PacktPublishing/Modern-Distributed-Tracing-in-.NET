@@ -1,0 +1,11 @@
+{
+  "profiles": {
+    "storage": {
+      "commandName": "Project",
+      "applicationUrl": "http://localhost:5050",
+      "dotnetRunMessages": true,
+      "environmentVariables": { "OTEL_SERVICE_NAME":"storage" }
+    }
+  },
+  "$schema": "https://json.schemastore.org/launchsettings.json"
+}
