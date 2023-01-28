@@ -1,15 +1,14 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace issues.Controllers
+namespace issues.Controllers;
+
+[ApiController]
+[Route("[controller]")]
+public class DummyController : ControllerBase
 {
-    [ApiController]
-    [Route("[controller]")]
-    public class DummyController : ControllerBase
+    [HttpGet]
+    public async Task Dummy([FromQuery] int delay, CancellationToken cancellationToken)
     {
-        [HttpGet]
-        public async Task Dummy([FromQuery] int delay, CancellationToken cancellationToken)
-        {
-            await Task.Delay(delay);
-        }
+        await Task.Delay(delay, cancellationToken);
     }
 }

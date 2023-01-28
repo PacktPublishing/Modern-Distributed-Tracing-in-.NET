@@ -27,7 +27,7 @@ services:
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://otelcollector:4317
       - OTEL_SERVICE_NAME=storage
   otelcollector:
-    image: otel/opentelemetry-collector-contrib-dev  #TODO - tag and exavt version here
+    image: otel/opentelemetry-collector-contrib:0.70.0
     command: ["--config=/etc/otel-collector-config.yml"]
     ports:
       - "4317:4317"   # OTLP gRPC receiver

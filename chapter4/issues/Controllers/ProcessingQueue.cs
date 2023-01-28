@@ -1,44 +1,44 @@
 ﻿using System.Collections.Concurrent;
 
-namespace issues
+namespace issues;
+public class ProcessingQueue : IHostedService
 {
-    public class ProcessingQueue : IHostedService
+    private readonly ConcurrentQueue<Action> _queue = new ();
+    private readonly CancellationTokenSource _cts = new ();
+    private readonly Task _task;
+
+    public ProcessingQueue()
     {
-        private readonly ConcurrentQueue<Action> _queue = new ConcurrentQueue<Action>();
-        private readonly CancellationTokenSource _cts = new CancellationTokenSource();
-        private readonly Task _task;
+        _task = new Task(() => Loop());
+    }
 
-        public ProcessingQueue()
-        {
-            _task = new Task(() => Loop());
-        }
+    public void Enqueue(Action process)
+    {
+        _queue.Enqueue(process);
+    }
 
-        public void Enqueue(Action process)
-        {
-            _queue.Enqueue(process);
-        }
+    public Task StartAsync(CancellationToken cancellationToken)
+    {
+        _task.Start();
+        return Task.CompletedTask;
+    }
 
-        public Task StartAsync(CancellationToken cancellationToken)
-        {
-            _task.Start();
-            return Task.CompletedTask;
-        }
+    public Task StopAsync(CancellationToken cancellationToken)
+    {
+        _cts.Cancel();
+        return _task;
+    }
 
-        public Task StopAsync(CancellationToken cancellationToken)
+    private Task Loop()
+    {
+        while(_cts.IsCancellationRequested)
         {
-            _cts.Cancel();
-            return _task;
-        }
-
-        private async Task Loop()
-        {
-            while(_cts.IsCancellationRequested)
+            if (_queue.TryDequeue(out var process))
             {
-                if (_queue.TryDequeue(out var process))
-                {
-                    process();
-                }
+                process();
             }
         }
+
+        return Task.CompletedTask;
     }
 }

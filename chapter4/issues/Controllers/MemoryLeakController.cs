@@ -1,29 +1,28 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace issues.Controllers
+namespace issues.Controllers;
+
+public readonly record struct User(string name, string email);
+
+[ApiController]
+[Route("[controller]")]
+public class MemoryLeakController : ControllerBase
 {
-    public readonly record struct User(string name, string email);
+    private readonly ILogger _logger;
+    private readonly ProcessingQueue _queue;
 
-    [ApiController]
-    [Route("[controller]")]
-    public class MemoryLeakController : ControllerBase
+    public MemoryLeakController(ILogger<MemoryLeakController> logger, ProcessingQueue queue)
     {
-        private readonly ILogger _logger;
-        private readonly ProcessingQueue _queue;
+        _logger = logger;
+        _queue = queue;
+    }
 
-        public MemoryLeakController(ILogger<MemoryLeakController> logger, ProcessingQueue queue)
-        {
-            _logger = logger;
-            _queue = queue;
-        }
+    [HttpGet]
+    public string LeakMemory()
+    {
+        _queue.Enqueue(() => _logger.LogInformation("notification for {user}", 
+            new User("Foo", "leak@memory.net")));
 
-        [HttpGet]
-        public string LeakMemory()
-        {
-            _queue.Enqueue(() => _logger.LogInformation("notification for {user}", 
-                new User("Foo", "leak@memory.net")));
-
-            return "all done";
-        }
+        return "all done";
     }
 }

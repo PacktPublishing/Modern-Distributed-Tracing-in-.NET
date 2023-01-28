@@ -10,22 +10,29 @@ Sdk.CreateTracerProviderBuilder()
     .AddHttpClientInstrumentation()
     .Build();
 
+var command = new RootCommand("Load generator");
+
 var parallelRequestsOption = new Option<int>("--parallel", () => 100, "parallel requests");
+command.AddGlobalOption(parallelRequestsOption);
+
 var lockOption = new Option<bool>("--sync", () => false, "test sync lock");
+var lockCommand = new Command("lock") { lockOption };
 
-var lockCommand = new Command("lock") { parallelRequestsOption, lockOption };
-lockCommand.SetHandler((parallelRequests, syncLock) => Loop(() => "http://localhost:5051/lock?sync=" + syncLock, parallelRequests), parallelRequestsOption, lockOption);
-
-var memLeakCommand = new Command("memory-leak") { parallelRequestsOption };
-memLeakCommand.SetHandler((parallelRequests) => Loop(() => "http://localhost:5051/memoryleak", parallelRequests), parallelRequestsOption);
-
-var starveCommand = new Command("starve") { parallelRequestsOption };
-starveCommand.SetHandler((parallelRequests) => Loop(() => "http://localhost:5051/threadpoolstarvation", parallelRequests), parallelRequestsOption);
-
-var okCommand = new Command("ok") { parallelRequestsOption };
-okCommand.SetHandler((parallelRequests) => Loop(() => "http://localhost:5051/ok", parallelRequests), parallelRequestsOption);
-
+var memLeakCommand = new Command("memory-leak");
+var starveCommand = new Command("starve");
+var okCommand = new Command("ok");
 var spinCommand = new Command("spin") { parallelRequestsOption };
+
+command.AddCommand(okCommand);
+command.AddCommand(lockCommand);
+command.AddCommand(memLeakCommand);
+command.AddCommand(starveCommand);
+command.AddCommand(spinCommand);
+
+okCommand.SetHandler((parallelRequests) => Loop("http://localhost:5051/ok", parallelRequests), parallelRequestsOption);
+lockCommand.SetHandler((parallelRequests, syncLock) => Loop("http://localhost:5051/lock?sync=" + syncLock, parallelRequests), parallelRequestsOption, lockOption);
+memLeakCommand.SetHandler((parallelRequests) => Loop("http://localhost:5051/memoryleak", parallelRequests), parallelRequestsOption);
+starveCommand.SetHandler((parallelRequests) => Loop("http://localhost:5051/threadpoolstarvation", parallelRequests), parallelRequestsOption);
 spinCommand.SetHandler((parallelRequests) =>
 {
     var nums = new int[parallelRequests];
@@ -37,18 +44,12 @@ spinCommand.SetHandler((parallelRequests) =>
     }
 
     long roundRobin = 0;
-    return Loop(() => "http://localhost:5051/spin?fib=" + nums[roundRobin++ % parallelRequests], parallelRequests);
+    return Loop("http://localhost:5051/spin?fib=" + nums[roundRobin++ % parallelRequests], parallelRequests);
 }, parallelRequestsOption);
 
-var command = new RootCommand("Load generator");
-command.AddCommand(spinCommand);
-command.AddCommand(lockCommand);
-command.AddCommand(memLeakCommand);
-command.AddCommand(starveCommand);
-command.AddCommand(okCommand);
 await command.InvokeAsync(args);
 
-static async Task Loop(Func<string> getEndpoint, int parallelRequests)
+static async Task Loop(string endpoint, int parallelRequests)
 {
     var tasks = new HashSet<Task<HttpResponseMessage>>();
     var client = new HttpClient()
@@ -60,7 +61,7 @@ static async Task Loop(Func<string> getEndpoint, int parallelRequests)
     {
         while (tasks.Count < parallelRequests)
         {
-            tasks.Add(client.GetAsync(getEndpoint()));
+            tasks.Add(client.GetAsync(endpoint));
         }
 
         var t = await Task.WhenAny(tasks);

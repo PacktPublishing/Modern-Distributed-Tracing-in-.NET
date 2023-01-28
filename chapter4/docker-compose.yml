@@ -10,7 +10,6 @@ services:
       - "4318:4318"
       - "55679:55679"
     volumes:
-      - //var/run/docker.sock:/var/run/docker.sock
       - ./configs/otel-collector-config.yml:/etc/otel-collector-config.yml
     depends_on:
       - jaeger
