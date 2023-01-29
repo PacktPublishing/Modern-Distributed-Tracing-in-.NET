@@ -2,7 +2,10 @@ using issues;
 using OpenTelemetry;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
-using System.Diagnostics;
+
+ThreadPool.GetAvailableThreads(out var workerThreads, out var completionPortThreads);
+workerThreads = 16;
+ThreadPool.SetMaxThreads(workerThreads, completionPortThreads);
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,7 +27,8 @@ builder.Services.AddOpenTelemetry()
             .AddProcessInstrumentation()
             .AddRuntimeInstrumentation()
             .AddHttpClientInstrumentation()
-            .AddAspNetCoreInstrumentation());
+            .AddAspNetCoreInstrumentation())
+    .StartWithHost();
 
 var app = builder.Build();
 app.MapControllers();

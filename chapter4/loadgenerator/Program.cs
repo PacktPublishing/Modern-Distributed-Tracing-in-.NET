@@ -12,8 +12,10 @@ Sdk.CreateTracerProviderBuilder()
 
 var command = new RootCommand("Load generator");
 
-var parallelRequestsOption = new Option<int>("--parallel", () => 100, "parallel requests");
+var countOption = new Option<long>("--count", () => -1, "Total request count, set -1 to run endlessly");
+var parallelRequestsOption = new Option<int>("--parallel", () => 100, "Parallel requests");
 command.AddGlobalOption(parallelRequestsOption);
+command.AddGlobalOption(countOption);
 
 var lockOption = new Option<bool>("--sync", () => false, "test sync lock");
 var lockCommand = new Command("lock") { lockOption };
@@ -29,11 +31,11 @@ command.AddCommand(memLeakCommand);
 command.AddCommand(starveCommand);
 command.AddCommand(spinCommand);
 
-okCommand.SetHandler((parallelRequests) => Loop("http://localhost:5051/ok", parallelRequests), parallelRequestsOption);
-lockCommand.SetHandler((parallelRequests, syncLock) => Loop("http://localhost:5051/lock?sync=" + syncLock, parallelRequests), parallelRequestsOption, lockOption);
-memLeakCommand.SetHandler((parallelRequests) => Loop("http://localhost:5051/memoryleak", parallelRequests), parallelRequestsOption);
-starveCommand.SetHandler((parallelRequests) => Loop("http://localhost:5051/threadpoolstarvation", parallelRequests), parallelRequestsOption);
-spinCommand.SetHandler((parallelRequests) =>
+okCommand.SetHandler((parallelRequests, count) => Loop("http://localhost:5051/ok", parallelRequests, count), parallelRequestsOption, countOption);
+lockCommand.SetHandler((parallelRequests, syncLock, count) => Loop("http://localhost:5051/lock?sync=" + syncLock, parallelRequests, count), parallelRequestsOption, lockOption, countOption);
+memLeakCommand.SetHandler((parallelRequests, count) => Loop("http://localhost:5051/memoryleak", parallelRequests, count), parallelRequestsOption, countOption);
+starveCommand.SetHandler((parallelRequests, count) => Loop("http://localhost:5051/threadpoolstarvation", parallelRequests, count), parallelRequestsOption, countOption);
+spinCommand.SetHandler((parallelRequests, count) =>
 {
     var nums = new int[parallelRequests];
     var rand = new Random();
@@ -44,12 +46,12 @@ spinCommand.SetHandler((parallelRequests) =>
     }
 
     long roundRobin = 0;
-    return Loop("http://localhost:5051/spin?fib=" + nums[roundRobin++ % parallelRequests], parallelRequests);
-}, parallelRequestsOption);
+    return Loop("http://localhost:5051/spin?fib=" + nums[roundRobin++ % parallelRequests], parallelRequests, count);
+}, parallelRequestsOption, countOption);
 
 await command.InvokeAsync(args);
 
-static async Task Loop(string endpoint, int parallelRequests)
+static async Task Loop(string endpoint, int parallelRequests, long count)
 {
     var tasks = new HashSet<Task<HttpResponseMessage>>();
     var client = new HttpClient()
@@ -57,7 +59,8 @@ static async Task Loop(string endpoint, int parallelRequests)
         Timeout = TimeSpan.FromSeconds(30)
     };
 
-    while (true)
+    if (count < 0) count = long.MaxValue;
+    for (long i = 0; i < count; i ++)
     {
         while (tasks.Count < parallelRequests)
         {
@@ -73,7 +76,7 @@ static async Task Loop(string endpoint, int parallelRequests)
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex.ToString());
+            Console.WriteLine(ex.Message);
         }
     }
 }
