@@ -7,8 +7,6 @@ class MemeNameEnrichingProcessor : BaseProcessor<Activity>
 {
     public override void OnEnd(Activity activity)
     {
-        if (!activity.IsAllDataRequested) return;
-
         var name = GetName(activity);
         if (name != null) 
             activity.SetTag("meme_name", name);
