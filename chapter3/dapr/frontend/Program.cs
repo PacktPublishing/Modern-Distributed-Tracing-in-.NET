@@ -1,5 +1,4 @@
 using frontend;
-using OpenTelemetry;
 using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
@@ -53,8 +52,7 @@ static void ConfigureTelemetry(WebApplicationBuilder builder)
         .WithMetrics(meterProviderBuilder => meterProviderBuilder
             .AddOtlpExporter()
             .AddHttpClientInstrumentation()
-            .AddAspNetCoreInstrumentation())
-        .StartWithHost();
+            .AddAspNetCoreInstrumentation());
 
     builder.Logging.AddOpenTelemetry(options =>
         options.AddOtlpExporter());

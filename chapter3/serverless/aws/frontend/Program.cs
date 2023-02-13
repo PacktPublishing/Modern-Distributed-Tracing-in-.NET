@@ -47,6 +47,5 @@ static void ConfigureTelemetry(WebApplicationBuilder builder)
                 .AddXRayTraceId()
                 .AddOtlpExporter()
                 .AddHttpClientInstrumentation()
-                .AddAspNetCoreInstrumentation())
-        .StartWithHost();
+                .AddAspNetCoreInstrumentation());
 }

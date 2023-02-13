@@ -1,6 +1,5 @@
 using frontend;
-using OpenTelemetry.Exporter;
-using OpenTelemetry.Logs;
+using OpenTelemetry;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
 using System.Diagnostics;
@@ -49,15 +48,16 @@ app.Run();
 
 static void ConfigureTelemetry(WebApplicationBuilder builder)
 {
-    builder.Services.AddOpenTelemetryTracing(tracerProviderBuilder => tracerProviderBuilder
-        .AddJaegerExporter()
-        .AddHttpClientInstrumentation()
-        .AddAspNetCoreInstrumentation());
-
-    builder.Services.AddOpenTelemetryMetrics(meterProviderBuilder => meterProviderBuilder
-        .AddPrometheusExporter()
-        .AddHttpClientInstrumentation()
-        .AddAspNetCoreInstrumentation()
-        .AddProcessInstrumentation()
-        .AddRuntimeInstrumentation()); 
+    builder.Services.AddOpenTelemetry()
+        .WithTracing(tracerProviderBuilder => tracerProviderBuilder
+            .AddJaegerExporter()
+            .AddHttpClientInstrumentation()
+            .AddAspNetCoreInstrumentation())
+        .WithMetrics(meterProviderBuilder => meterProviderBuilder
+            .AddPrometheusExporter()
+            .AddHttpClientInstrumentation()
+            .AddAspNetCoreInstrumentation()
+            .AddProcessInstrumentation()
+            .AddRuntimeInstrumentation())
+        .StartWithHost();
 }

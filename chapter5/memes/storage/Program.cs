@@ -36,25 +36,25 @@ static void ConfigureTelemetry(WebApplicationBuilder builder)
 {
     var resourceBuilder = ResourceBuilder.CreateDefault()
         .AddService("storage", "memes", "1.0.0");
-    builder.Services.AddOpenTelemetryTracing(buidler => buidler
-        .SetResourceBuilder(resourceBuilder)
-        .AddProcessor<MemeNameEnrichingProcessor>()
-        .SetSampler(new ParentBasedSampler(new TraceIdRatioBasedSampler(1)))
-        .AddAspNetCoreInstrumentation(options =>
-        {
-            options.EnrichWithHttpRequest = (activity, request) =>
-                activity.SetTag("http.request_content_length", request.ContentLength);
+    builder.Services.AddOpenTelemetry()
+       .WithTracing(buidler => buidler
+            .SetResourceBuilder(resourceBuilder)
+            .AddProcessor<MemeNameEnrichingProcessor>()
+            .SetSampler(new ParentBasedSampler(new TraceIdRatioBasedSampler(1)))
+            .AddAspNetCoreInstrumentation(options =>
+            {
+                options.EnrichWithHttpRequest = (activity, request) =>
+                    activity.SetTag("http.request_content_length", request.ContentLength);
 
-            options.EnrichWithHttpResponse = (activity, response) =>
-                activity.SetTag("http.response_content_length", response.ContentLength);
+                options.EnrichWithHttpResponse = (activity, response) =>
+                    activity.SetTag("http.response_content_length", response.ContentLength);
 
-            options.RecordException = true;
-        })
-        .AddEntityFrameworkCoreInstrumentation()
-        .AddOtlpExporter());
-
-    builder.Services.AddOpenTelemetryMetrics(buidler => buidler
-        .SetResourceBuilder(resourceBuilder)
-        .AddAspNetCoreInstrumentation()
-        .AddOtlpExporter());
+                options.RecordException = true;
+            })
+            .AddEntityFrameworkCoreInstrumentation()
+            .AddOtlpExporter())
+        .WithMetrics(buidler => buidler
+            .SetResourceBuilder(resourceBuilder)
+            .AddAspNetCoreInstrumentation()
+            .AddOtlpExporter());
 }

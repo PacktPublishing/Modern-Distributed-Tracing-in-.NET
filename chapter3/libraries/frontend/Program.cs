@@ -47,8 +47,7 @@ static void ConfigureTelemetry(WebApplicationBuilder builder)
         .WithMetrics(meterProviderBuilder => meterProviderBuilder
             .AddOtlpExporter()
             .AddHttpClientInstrumentation()
-            .AddAspNetCoreInstrumentation())
-        .StartWithHost();
+            .AddAspNetCoreInstrumentation());
         
     builder.Logging.AddOpenTelemetry(options =>
         options.AddOtlpExporter());

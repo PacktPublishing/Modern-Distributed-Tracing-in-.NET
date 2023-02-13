@@ -9,7 +9,8 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddRazorPages();
 
-var storageEndpoint = builder.Configuration.GetSection("Storage").GetValue<string>("Endpoint");
+var storageEndpoint = builder.Configuration.GetSection("Storage").GetValue<string>("Endpoint") ?? 
+    throw new NullReferenceException("storage endpoint is not configured");
 builder.Services.AddHttpClient("storage", httpClient =>
 {
     httpClient.BaseAddress = new Uri(storageEndpoint);

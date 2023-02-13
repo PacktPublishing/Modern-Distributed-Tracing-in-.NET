@@ -4,7 +4,6 @@ using OpenTelemetry.Metrics;
 using OpenTelemetry.Logs;
 using Microsoft.Extensions.Options;
 using System.Net.Http.Headers;
-using OpenTelemetry;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -64,8 +63,7 @@ static void ConfigureTelemetry(WebApplicationBuilder builder)
         .WithMetrics(meterProviderBuilder => meterProviderBuilder
             .AddOtlpExporter()
             .AddHttpClientInstrumentation()
-            .AddAspNetCoreInstrumentation())
-        .StartWithHost();
+            .AddAspNetCoreInstrumentation());
 
     builder.Logging.AddOpenTelemetry(options =>
         options.AddOtlpExporter());

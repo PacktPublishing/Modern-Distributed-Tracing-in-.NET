@@ -25,11 +25,7 @@ public class Meme : PageModel
 
     public async Task<IActionResult> OnGet([FromQuery] string name)
     {
-        if (Activity.Current?.IsAllDataRequested == true)
-        {
-            Activity.Current.SetTag("meme_name", name);
-        }
-
+        Activity.Current?.SetTag("meme_name", name);
         Baggage.SetBaggage("meme_name", name);
 
         Name = name;

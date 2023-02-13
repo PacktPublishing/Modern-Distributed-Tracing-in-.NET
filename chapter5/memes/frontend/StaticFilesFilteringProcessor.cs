@@ -18,12 +18,13 @@ public class StaticFilesFilteringProcessor : BaseProcessor<Activity>
 
     static void StaticFilesProcessorSample(WebApplicationBuilder builder)
     {
-        builder.Services.AddOpenTelemetryTracing(builder => builder
-            .SetSampler(new TraceIdRatioBasedSampler(1))
-            .AddProcessor<StaticFilesFilteringProcessor>()
-            .AddProcessor<MemeNameEnrichingProcessor>()
-            .AddHttpClientInstrumentation(o => o.RecordException = true)
-            .AddAspNetCoreInstrumentation()
-            .AddOtlpExporter());
+        builder.Services.AddOpenTelemetry()
+            .WithTracing(builder => builder
+                .SetSampler(new TraceIdRatioBasedSampler(1))
+                .AddProcessor<StaticFilesFilteringProcessor>()
+                .AddProcessor<MemeNameEnrichingProcessor>()
+                .AddHttpClientInstrumentation(o => o.RecordException = true)
+                .AddAspNetCoreInstrumentation()
+                .AddOtlpExporter());
     }
 }

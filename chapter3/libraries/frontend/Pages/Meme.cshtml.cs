@@ -19,17 +19,17 @@ public class Meme : PageModel
     public string? ImageBase64 { get; set; }
 
     [BindProperty]
-    public CancellationToken cancellationToken { get; set; }
+    public CancellationToken CancellationToken { get; set; }
 
     public async Task<IActionResult> OnGet()
     {
-        Name = Request.Query["name"];
+        Name = Request.Query["name"]!;
 
         try 
         {
-            using var stream = await _storage.ReadAsync(Name, cancellationToken);
+            using var stream = await _storage.ReadAsync(Name, CancellationToken);
             using var copy = new MemoryStream();
-            await stream.CopyToAsync(copy, cancellationToken);
+            await stream.CopyToAsync(copy, CancellationToken);
             copy.Position = 0;
             ImageBase64 = Convert.ToBase64String(copy.ToArray());
             return new PageResult();

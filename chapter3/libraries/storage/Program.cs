@@ -6,7 +6,6 @@ using StackExchange.Redis;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Caching.StackExchangeRedis;
-using OpenTelemetry;
 
 AppContext.SetSwitch("Azure.Experimental.EnableActivitySource", true);
 
@@ -95,8 +94,7 @@ static void ConfigureTelemetry(WebApplicationBuilder builder, IConnectionMultipl
         .WithMetrics(meterProviderBuilder => meterProviderBuilder
             .AddOtlpExporter()
             .AddHttpClientInstrumentation()
-            .AddAspNetCoreInstrumentation())
-        .StartWithHost();
+            .AddAspNetCoreInstrumentation());
 
     builder.Logging.AddOpenTelemetry(options =>
         options.AddOtlpExporter());

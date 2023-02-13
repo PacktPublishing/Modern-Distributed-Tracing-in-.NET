@@ -1,13 +1,13 @@
-﻿{
-  "$schema": "https://json.schemastore.org/launchsettings.json",
+{
   "profiles": {
     "http": {
       "commandName": "Project",
-      "dotnetRunMessages": true,
-      "applicationUrl": "http://localhost:5051",
       "environmentVariables": {
         "OTEL_SERVICE_NAME": "sampling"
-      }
+      },
+      "dotnetRunMessages": true,
+      "applicationUrl": "http://localhost:5051"
     }
-  }
+  },
+  "$schema": "https://json.schemastore.org/launchsettings.json"
 }

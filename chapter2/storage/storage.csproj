@@ -13,18 +13,19 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="7.0.0" />
-	  <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="7.0.0-alpha.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="7.0.2" />
+    <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="7.0.0" />
     <PackageReference Include="System.Linq.Async" Version="6.0.1" />
-  	<PackageReference Include="Microsoft.Extensions.Logging" Version="7.0.0" />
-	  <PackageReference Include="OpenTelemetry" Version="1.4.0-beta.3" />
-	  <PackageReference Include="OpenTelemetry.Instrumentation.EntityFrameworkCore" Version="1.0.0-beta.3" />
-    <PackageReference Include="OpenTelemetry.Instrumentation.Process" Version="1.0.0-alpha.2" />
-	  <PackageReference Include="OpenTelemetry.Instrumentation.Runtime" Version="1.1.0-beta.1" />
-	  <PackageReference Include="OpenTelemetry.Exporter.Jaeger" Version="1.4.0-beta.3" />
-    <PackageReference Include="OpenTelemetry.Exporter.Prometheus.AspNetCore" Version="1.4.0-beta.3" />
-    <PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.0.0-rc9.9" />
-	  <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.0.0-rc9.9" />
-	  <PackageReference Include="OpenTelemetry.Instrumentation.Http" Version="1.0.0-rc9.9" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="7.0.0" />
+
+    <PackageReference Include="OpenTelemetry.Instrumentation.EntityFrameworkCore" Version="1.0.0-beta.3" />
+    <PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.4.0-rc.3" />
+    <PackageReference Include="OpenTelemetry" Version="1.4.0-rc.3" />
+    <PackageReference Include="OpenTelemetry.Instrumentation.Process" Version="1.0.0-alpha.5" />
+    <PackageReference Include="OpenTelemetry.Instrumentation.Runtime" Version="1.1.0-beta.4" />
+    <PackageReference Include="OpenTelemetry.Exporter.Jaeger" Version="1.4.0-rc.3" />
+    <PackageReference Include="OpenTelemetry.Exporter.Prometheus.AspNetCore" Version="1.4.0-rc.3" />
+    <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.0.0-rc9.12" />
+    <PackageReference Include="OpenTelemetry.Instrumentation.Http" Version="1.0.0-rc9.12" />
   </ItemGroup>
 </Project>
