@@ -15,13 +15,12 @@ public class Worker
             var res = await Client.GetAsync("https://www.bing.com/search?q=distributed%20tracing", HttpCompletionOption.ResponseHeadersRead);
             res.EnsureSuccessStatusCode();
 
-            doWork?.AddEvent(new ActivityEvent("response_headers"));
+            doWork?.AddEvent(new ActivityEvent("received_response_headers"));
             var contents = await res.Content.ReadAsStringAsync();
             Console.WriteLine($"Work item {workItemId} done!");
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Work item {workItemId} failed...");
             doWork?.SetStatus(ActivityStatusCode.Error, ex.Message);
         }
     }

@@ -10,5 +10,4 @@ using var tracerProvider = Sdk.CreateTracerProviderBuilder()
     .AddConsoleExporter()
     .Build()!;
 
-
 await Worker.DoWork(1);
