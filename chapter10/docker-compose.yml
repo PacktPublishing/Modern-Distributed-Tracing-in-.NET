@@ -1,0 +1,57 @@
+version: "3.9"
+services:
+  client:
+    build:
+      dockerfile: ./client//Dockerfile
+    ports:
+      - "5051:5051"
+    environment:
+      - ASPNETCORE_URLS=http://+:5051
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://otelcollector:4317
+      - OTEL_SERVICE_NAME=client
+      - OTEL_METRIC_EXPORT_INTERVAL=5000
+      - Server__Endpoint=https://server:7070
+  server:
+    build:
+      dockerfile: ./server/Dockerfile
+    ports:
+      - "7070:7070"
+    environment:
+      - ASPNETCORE_URLS=https://+:7070
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://otelcollector:4317
+      - OTEL_SERVICE_NAME=server
+      - OTEL_METRIC_EXPORT_INTERVAL=5000      
+      # make sure to use user secrets management in real-world applications.
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=123
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/devcert.pfx
+    volumes:
+      - ./cert:/https:ro      
+  otelcollector:
+    image: otel/opentelemetry-collector-contrib
+    command: ["--config=/etc/otel-collector-config.yml"]
+    ports:
+      - "8889:8889"
+      - "13133:13133"
+      - "4317:4317"
+      - "4318:4318"
+      - "55679:55679"
+    volumes:
+      - ./configs/otel-collector-config.yml:/etc/otel-collector-config.yml
+    depends_on:
+      - jaeger
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    ports:
+      - "14250:14250"
+      - "14268:14268"
+      - "6831:6831/udp"
+      - "16686:16686"
+      - "16685:16685"
+  prometheus:
+    image: prom/prometheus:latest
+    volumes:
+      - ./configs/prometheus-otel.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+    depends_on:
+      - otelcollector

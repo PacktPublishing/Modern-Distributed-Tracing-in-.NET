@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+option csharp_namespace = "client";
+
+package notifier;
+
+service Nofitier {
+  rpc SendMessage (Message) returns (MessageResponse);
+  rpc SendMessages (stream Message) returns (stream MessageResponse);
+}
+
+message Message {
+  string text = 1;
+  map<string, string> attributes = 2;
+}
+
+message MessageResponse {
+  string status = 1;
+}
