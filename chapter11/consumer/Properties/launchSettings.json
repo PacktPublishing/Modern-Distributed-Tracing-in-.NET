@@ -1,0 +1,13 @@
+{
+  "profiles": {
+    "consumer": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "DOTNET_ENVIRONMENT": "Development",
+        "OTEL_METRIC_EXPORT_INTERVAL": "5000",
+        "Queue__ConnectionString": "DefaultEndpointsProtocol=http;AccountName=myaccount;AccountKey=bm9rZXkx;QueueEndpoint=http://localhost:10001/myaccount"
+      },
+      "dotnetRunMessages": true
+    }
+  }
+}

@@ -1,0 +1,17 @@
+﻿{
+  "$schema": "https://json.schemastore.org/launchsettings.json",
+  "profiles": {
+    "http": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "launchBrowser": true,
+      "launchUrl": "swagger",
+      "applicationUrl": "http://localhost:5051",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "OTEL_METRIC_EXPORT_INTERVAL": "5000",
+        "Queue__ConnectionString": "DefaultEndpointsProtocol=http;AccountName=myaccount;AccountKey=bm9rZXkx;QueueEndpoint=http://localhost:10001/myaccount;"
+      }
+    }
+  }
+}
