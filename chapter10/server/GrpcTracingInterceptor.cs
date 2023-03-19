@@ -39,6 +39,38 @@ public class GrpcTracingInterceptor : Interceptor
         }
     }
 
+    private static void SetRpcAttributes(Activity activity, string authority, string methodName)
+    {
+        GetHostAndPort(authority, out var host, out var port);
+        GetServiceAndMethod(methodName, out var service, out var method);
+
+        activity.SetTag("rpc.system", "grpc");
+        activity.SetTag("rpc.service", service);
+        activity.SetTag("rpc.method", method);
+        activity.SetTag("net.host.name", host);
+        if (port != 80 && port != 443)
+        {
+            activity.SetTag("net.host.port", port);
+        }
+    }
+
+    private static void SetStatus(Activity activity, Grpc.Core.Status status)
+    {
+        activity.SetTag("rpc.grpc.status_code", (int)status.StatusCode);
+
+        ActivityStatusCode activityStatusCode = ActivityStatusCode.Unset;
+        if (status.StatusCode != Grpc.Core.StatusCode.OK)
+        {
+            activityStatusCode = ActivityStatusCode.Error;
+        }
+
+        if (status.DebugException != null) { 
+            activity.RecordException(status.DebugException);
+        }
+
+        activity.SetStatus(activityStatusCode, status.Detail);
+    }
+    
     public override async Task DuplexStreamingServerHandler<Req, Res>(IAsyncStreamReader<Req> requestStream, IServerStreamWriter<Res> responseStream, ServerCallContext context, DuplexStreamingServerMethod<Req, Res> continuation)
         where Req : class
         where Res : class
@@ -71,39 +103,6 @@ public class GrpcTracingInterceptor : Interceptor
 
     private static IEnumerable<string> Getter(Metadata headers, string fieldName) =>
         headers.Where(h => h.Key == fieldName).Select(h => h.Value);
-
-
-    private static void SetRpcAttributes(Activity activity, string authority, string methodName)
-    {
-        GetHostAndPort(authority, out var host, out var port);
-        GetServiceAndMethod(methodName, out var service, out var method);
-
-        activity.SetTag("rpc.system", "grpc");
-        activity.SetTag("rpc.service", service);
-        activity.SetTag("rpc.method", method);
-        activity.SetTag("net.host.name", host);
-        if (port != 80 && port != 443)
-        {
-            activity.SetTag("net.host.port", port);
-        }
-    }
-
-    private static void SetStatus(Activity activity, Grpc.Core.Status status)
-    {
-        activity.SetTag("rpc.grpc.status_code", (int)status.StatusCode);
-
-        ActivityStatusCode activityStatusCode = ActivityStatusCode.Unset;
-        if (status.StatusCode != Grpc.Core.StatusCode.OK)
-        {
-            activityStatusCode = ActivityStatusCode.Error;
-        }
-
-        if (status.DebugException != null) { 
-            activity.RecordException(status.DebugException);
-        }
-
-        activity.SetStatus(activityStatusCode, status.Detail);
-    }
 
     private static void SetStatus(Activity activity, Exception exception)
     {

@@ -69,7 +69,7 @@ public class NotifierService : Nofitier.NofitierBase
         };
     }
 
-    private async Task<MessageResponse> ProcessMessage(Message message, CancellationToken cancellationToken)
+    private static async Task<MessageResponse> ProcessMessage(Message message, CancellationToken cancellationToken)
     {
         await Task.Delay(100, cancellationToken);
         return new MessageResponse { Status = $"ok({ParseIndex(message.Text)})" };

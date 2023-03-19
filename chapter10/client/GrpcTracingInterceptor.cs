@@ -74,7 +74,29 @@ public class GrpcTracingInterceptor : Interceptor
         return ctx;
     }
 
+    private void SetRpcAttributes<Req, Res>(Activity act, Method<Req, Res> method)
+    {
+        act.SetTag("rpc.system", "grpc");
+        act.SetTag("rpc.service", method.ServiceName);
+        act.SetTag("rpc.method", method.Name);
+        act.SetTag("net.peer.name", _host);
+        if (_port != 80 && _port != 443)
+        {
+            act.SetTag("net.peer.port", _port);
+        }
+    }
 
+    private static void SetStatus(Activity act, Grpc.Core.Status status)
+    {
+        act.SetTag("rpc.grpc.status_code", (int)status.StatusCode);
+
+        var activityStatus = status.StatusCode != Grpc.Core.StatusCode.OK ?
+            ActivityStatusCode.Error : ActivityStatusCode.Unset;
+
+        act.SetStatus(activityStatus, status.Detail);
+    }
+
+    
     public override AsyncDuplexStreamingCall<Req, Res> AsyncDuplexStreamingCall<Req, Res>(ClientInterceptorContext<Req, Res> ctx, AsyncDuplexStreamingCallContinuation<Req, Res> continuation)
     {
         var activity = Source.StartActivity(ctx.Method.FullName, ActivityKind.Client);
@@ -100,27 +122,6 @@ public class GrpcTracingInterceptor : Interceptor
             });
     }
 
-    private void SetRpcAttributes<Req, Res>(Activity act, Method<Req, Res> method)
-    {
-        act.SetTag("rpc.system", "grpc");
-        act.SetTag("rpc.service", method.ServiceName);
-        act.SetTag("rpc.method", method.Name);
-        act.SetTag("net.peer.name", _host);
-        if (_port != 80 && _port != 443)
-        {
-            act.SetTag("net.peer.port", _port);
-        }
-    }
-
-    private static void SetStatus(Activity act, Grpc.Core.Status status)
-    {
-        act.SetTag("rpc.grpc.status_code", (int)status.StatusCode);
-
-        var activityStatus = status.StatusCode != Grpc.Core.StatusCode.OK ?
-            ActivityStatusCode.Error : ActivityStatusCode.Unset;
-
-        act.SetStatus(activityStatus, status.Detail);
-    }
 
     private static void SetStatus(Activity activity, Exception exception)
     {
