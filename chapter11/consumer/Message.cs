@@ -1,4 +1,6 @@
-﻿namespace producer;
+﻿using System.Text.Json.Serialization;
+
+namespace consumer;
 
 public class Message
 {

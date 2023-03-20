@@ -8,6 +8,11 @@ public class Message
     { 
     }
 
+    public Message(string text)
+    {
+        Text = text;
+    }
+
     public Message(object payload)
     {
         Text = JsonSerializer.Serialize(payload);

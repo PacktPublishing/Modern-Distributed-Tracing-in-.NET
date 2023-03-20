@@ -29,13 +29,8 @@ public class SendController : ControllerBase
     [HttpGet]
     public async Task<SendReceipt> SendMessage([FromQuery]bool malformed)
     {
-        var payload = new { hello = "tracing" };
-        if (malformed ) {
-            var receipt = await _queue.SendMessageAsync(BinaryData.FromObjectAsJson(payload));
-            return receipt.Value;
-
-        }
-        return await SendInstrumented(new Message(payload));
+        var message = malformed ? new Message(string.Empty) : new Message(new { hello = "tracing" });
+        return await SendInstrumented(message);
     }
 
     [HttpGet("{count}")]

@@ -1,7 +1,6 @@
 using Azure.Storage.Queues;
 using Azure.Storage.Queues.Models;
 using OpenTelemetry.Context.Propagation;
-using producer;
 using System.Diagnostics;
 using System.Diagnostics.Metrics;
 
@@ -50,6 +49,7 @@ public class SingleReceiver : BackgroundService
                     continue;
                 }
 
+                act?.SetTag("messaging.message.id", messages[0].MessageId);
                 await ProcessAndSettle(messages[0], token);
                 RecordLoopDuration(duration, "ok");
             }

@@ -2,7 +2,6 @@ using Azure.Storage.Queues;
 using Azure.Storage.Queues.Models;
 using Microsoft.Extensions.Options;
 using OpenTelemetry.Context.Propagation;
-using producer;
 using System.Diagnostics;
 using System.Diagnostics.Metrics;
 
@@ -48,7 +47,13 @@ public class BatchReceiver : BackgroundService
                 QueueMessage[] messages = response.Value;
                 RecordLag(messages);
                 
-                act?.SetTag("messaging.batch.message_count", messages.Length);
+                if (act?.IsAllDataRequested == true)
+                {
+                    act.SetTag("messaging.batch.message_count", messages.Length)
+                       // since we can't (yet) add links to ReceiveAndProcess activity. let's do something similar by recording message ids
+                       .SetTag("messaging.message.ids", messages.Select(m => m.MessageId).ToArray());
+                }
+
                 if (messages.Length == 0)
                 {
                     await Task.Delay(1000, token);
@@ -56,7 +61,8 @@ public class BatchReceiver : BackgroundService
                     RecordLoopDuration(duration, "empty");
                     continue;
                 }
-                await Task.WhenAll(messages.Select((m, i) => ProcessAndSettle(m, token)));
+
+                await Task.WhenAll(messages.Select(m => ProcessAndSettle(m, token)));
                 RecordLoopDuration(duration,"ok");
             }
             catch (Exception ex)
@@ -109,10 +115,16 @@ public class BatchReceiver : BackgroundService
     {
         Message msg = message.Body.ToObjectFromJson<Message>();
         _logger.LogInformation("received message {message}", msg.Text);
+
+        if (string.IsNullOrEmpty(msg.Text))
+        {
+            throw new ArgumentException("message text canot be empty");
+        }
         if (DateTimeOffset.UtcNow.ToUnixTimeSeconds() % 7 == 0)
         {
             throw new Exception("bad luck");
         }
+
 
         await Task.Delay(Random.Value!.Next(500), cancellationToken);
     }
@@ -173,6 +185,7 @@ public class BatchReceiver : BackgroundService
 
     private PropagationContext ExtractContext(QueueMessage message)
     {
+        // can be optimized
         var payload = message.Body.ToObjectFromJson<Message>();
         return _propagator.Extract(default, payload, ExtractValue);
     }
