@@ -6,23 +6,23 @@ namespace sampling;
 
 class DebugSampler : Sampler
 {
-    private readonly static Sampler AlwaysOnSampler = new AlwaysOnSampler();
+    private readonly static Sampler On = new AlwaysOnSampler();
     private readonly static Regex DebugFlag = new Regex("(^|,)myapp=debug:1($|,)", RegexOptions.Compiled);
 
-    private readonly Sampler _defaultSampler;
+    private readonly Sampler _default;
     public DebugSampler(double probability)
     {
-        _defaultSampler = new TraceIdRatioBasedSampler(probability);
+        _default = new TraceIdRatioBasedSampler(probability);
     }
 
-    public override SamplingResult ShouldSample(in SamplingParameters samplingParameters)
+    public override SamplingResult ShouldSample(in SamplingParameters parameters)
     {
-        var tracestate = samplingParameters.ParentContext.TraceState;
+        var tracestate = parameters.ParentContext.TraceState;
         if (tracestate != null && DebugFlag.IsMatch(tracestate))
         {
-            return AlwaysOnSampler.ShouldSample(samplingParameters);
+            return On.ShouldSample(parameters);
         }
 
-        return _defaultSampler.ShouldSample(samplingParameters);
+        return _default.ShouldSample(parameters);
     }
 }

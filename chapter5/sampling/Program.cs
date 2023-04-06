@@ -29,10 +29,9 @@ void ConfigureProbabilitySampler(WebApplicationBuilder builder)
 
 void ConfigureParentBasedSampler(WebApplicationBuilder builder)
 {
-    var rootSampler = new TraceIdRatioBasedSampler(0.1);
     builder.Services.AddOpenTelemetry()
         .WithTracing(tp => tp
-            .SetSampler(new ParentBasedSampler(rootSampler))
+            .SetSampler(new ParentBasedSampler(new AlwaysOffSampler()))
             .AddOtlpExporter());
 }
 

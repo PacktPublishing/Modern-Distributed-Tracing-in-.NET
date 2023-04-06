@@ -41,15 +41,15 @@ static void ConfigureTelemetry(WebApplicationBuilder builder)
             .SetResourceBuilder(resourceBuilder)
             .AddProcessor<MemeNameEnrichingProcessor>()
             .SetSampler(new ParentBasedSampler(new TraceIdRatioBasedSampler(1)))
-            .AddAspNetCoreInstrumentation(options =>
+            .AddAspNetCoreInstrumentation(o =>
             {
-                options.EnrichWithHttpRequest = (activity, request) =>
+                o.EnrichWithHttpRequest = (activity, request) =>
                     activity.SetTag("http.request_content_length", request.ContentLength);
 
-                options.EnrichWithHttpResponse = (activity, response) =>
+                o.EnrichWithHttpResponse = (activity, response) =>
                     activity.SetTag("http.response_content_length", response.ContentLength);
 
-                options.RecordException = true;
+                o.RecordException = true;
             })
             .AddEntityFrameworkCoreInstrumentation()
             .AddOtlpExporter())

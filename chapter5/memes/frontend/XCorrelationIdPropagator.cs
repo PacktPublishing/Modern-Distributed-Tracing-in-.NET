@@ -1,6 +1,7 @@
 ﻿using OpenTelemetry;
 using OpenTelemetry.Context.Propagation;
 using System.Diagnostics;
+using B3Propagator = OpenTelemetry.Extensions.Propagators.B3Propagator;
 
 namespace frontend;
 
@@ -33,10 +34,13 @@ public class XCorrelationIdPropagator : TextMapPropagator
 
     public static void ConfigureCustomPropagatorSample()
     {
-        Sdk.SetDefaultTextMapPropagator(new CompositeTextMapPropagator(new TextMapPropagator[] {
-        new OpenTelemetry.Extensions.Propagators.B3Propagator(true),
-        new XCorrelationIdPropagator(),
-        new BaggagePropagator() }));
+        Sdk.SetDefaultTextMapPropagator(new CompositeTextMapPropagator(
+            new TextMapPropagator[] {
+                new B3Propagator(true),
+                new XCorrelationIdPropagator(),
+                new BaggagePropagator()
+            }
+        ));
 
         DistributedContextPropagator.Current =
             DistributedContextPropagator.CreateNoOutputPropagator();

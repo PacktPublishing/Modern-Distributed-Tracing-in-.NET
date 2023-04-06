@@ -12,13 +12,13 @@ internal class Worker
         using var workActivity = Source.StartActivity();
         workActivity?.AddTag("work_item.id", workItemId);
 
-        await DoWithRetry(async tryNumber =>
+        await DoWithRetry(async tryCount =>
         {
             using var tryActivity = Source.StartActivity("Try");
             try
             {
-                await DoWorkImpl(workItemId, tryNumber);
-                tryActivity?.SetTag("try_count", tryNumber);
+                await DoWorkImpl(workItemId, tryCount);
+                tryActivity?.SetTag("try_count", tryCount);
             }
             catch (Exception ex)
             {
@@ -50,9 +50,9 @@ internal class Worker
         await Task.Delay(TimeSpan.FromMilliseconds(100));
     }
 
-    private static Task DoWorkImpl(int workItemId, int tryNumber)
+    private static Task DoWorkImpl(int workItemId, int tryCount)
     {
-        if (tryNumber % 2 == 0)
+        if (tryCount % 2 == 0)
         {
             throw new Exception("something went wrong");
         }

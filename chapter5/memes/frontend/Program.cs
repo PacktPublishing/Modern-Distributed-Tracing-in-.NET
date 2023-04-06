@@ -44,10 +44,10 @@ app.Run();
 
 static void ConfigureTelemetry(WebApplicationBuilder builder)
 {
-    var envAttribute = new KeyValuePair<string, object>("env", builder.Environment.EnvironmentName);
+    var env = new KeyValuePair<string, object>("env", builder.Environment.EnvironmentName);
     var resourceBuilder = ResourceBuilder.CreateDefault()
         .AddService("frontend", "memes", "1.0.0")
-        .AddAttributes(new[] {envAttribute});
+        .AddAttributes(new[] {env});
     var samplingProbability = builder.Configuration.GetSection("Sampling").GetValue<double>("Probability");
 
     builder.Services.AddOpenTelemetry()
