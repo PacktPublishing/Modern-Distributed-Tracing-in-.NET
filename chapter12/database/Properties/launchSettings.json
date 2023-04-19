@@ -6,7 +6,7 @@
         "ASPNETCORE_ENVIRONMENT": "Development",
         "OTEL_EXPORTER_OTLP_ENDPOINT": "http://localhost:4317",
         "Redis__ConnectionString": "localhost:6379",
-        "Mongo__ConnectionString": "mongodb://root:example@localhost:27017"
+        "Mongo__ConnectionString": "mongodb://localhost:27017"
       },
       "dotnetRunMessages": true,
       "applicationUrl": "http://localhost:5051"

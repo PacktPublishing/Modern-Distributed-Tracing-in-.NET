@@ -7,7 +7,7 @@ services:
     ports:
       - "5051:5051"    
     environment:
-      - Mongo__ConnectionString=mongodb://${MONGO_USER}:${MONGO_PASSWORD}@mongo:27017 
+      - Mongo__ConnectionString=mongodb://mongo:27017
       - Redis__ConnectionString=redis:6379
       - ASPNETCORE_URLS=http://+:5051
       - OTEL_SERVICE_NAME=app
@@ -21,10 +21,7 @@ services:
       resources:
         limits:
           cpus: '0.01'
-          memory: 256M          
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER}
-      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
+          memory: 256M
   redis:
     image: redis
     ports:
