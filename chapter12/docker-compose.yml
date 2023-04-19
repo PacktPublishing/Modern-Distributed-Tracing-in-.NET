@@ -1,0 +1,65 @@
+version: "3.9"
+services:
+  database:
+    build:
+      context: ./    
+      dockerfile: ./database/Dockerfile
+    ports:
+      - "5051:5051"    
+    environment:
+      - Mongo__ConnectionString=mongodb://${MONGO_USER}:${MONGO_PASSWORD}@mongo:27017 
+      - Redis__ConnectionString=redis:6379
+      - ASPNETCORE_URLS=http://+:5051
+      - OTEL_SERVICE_NAME=app
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://otelcollector:4317
+      - OTEL_METRIC_EXPORT_INTERVAL=5000
+  mongo:
+    image: mongo
+    ports:
+      - "27017:27017"
+    deploy:
+      resources:
+        limits:
+          cpus: '0.01'
+          memory: 256M          
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
+  redis:
+    image: redis
+    ports:
+      - "6379:6379"
+    command: [ "redis-server", "--bind", "redis", "--port", "6379"]
+  otelcollector:
+    image: otel/opentelemetry-collector-contrib
+    command: ["--config=/etc/otel-collector-config.yml"]
+    ports:
+      - "8889:8889"
+      - "13133:13133"
+      - "4317:4317"
+      - "4318:4318"
+      - "55679:55679"
+    volumes:
+      - //var/run/docker.sock:/var/run/docker.sock
+      - ./configs/otel-collector-config.yml:/etc/otel-collector-config.yml
+    depends_on:
+      - jaeger
+    environment:
+      MONGO_USER: ${MONGO_USER}
+      MONGO_PASSWORD: ${MONGO_PASSWORD}
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    ports:
+      - "14250:14250"
+      - "14268:14268"
+      - "6831:6831/udp"
+      - "16686:16686"
+      - "16685:16685"
+  prometheus:
+    image: prom/prometheus:latest
+    volumes:
+      - ./configs/prometheus-otel.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+    depends_on:
+      - otelcollector

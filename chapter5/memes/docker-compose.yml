@@ -37,7 +37,7 @@ services:
       - MYSQL_ROOT_PASSWORD=pwd
   otelcollector:
     image: otel/opentelemetry-collector-contrib
-    command: ["--config=/etc/otel-collector-config.yml", "--feature-gates=receiver.dockerstats.useScraperV2"]
+    command: ["--config=/etc/otel-collector-config.yml"]
     ports:
       - "8889:8889"   # Prometheus exporter metrics
       - "13133:13133" # health_check extension
