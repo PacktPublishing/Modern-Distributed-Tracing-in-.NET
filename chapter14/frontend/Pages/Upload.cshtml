@@ -1,0 +1,7 @@
+﻿@page "/"
+@model frontend.Pages.Upload
+@{
+}
+<form method="post" enctype="multipart/form-data">
+    <p><input type="file" asp-for="MemeFile"/><input type="submit" value="Upload"/></p>
+</form>

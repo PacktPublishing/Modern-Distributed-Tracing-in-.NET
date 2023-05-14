@@ -1,0 +1,32 @@
+groups:
+  - id: memes.meme
+    type: attribute_group
+    brief: "Describes memes attributes."
+    prefix: memes.meme
+    attributes:
+      - id: name
+        type: string
+        requirement_level: required
+        brief: 'Unique and sanitized meme name'
+        examples: ["this is fine"]
+      - id: size
+        type: int
+        requirement_level: opt_in
+        brief: 'Meme size in bytes.'
+        examples: [49335, 12345]
+      - id: type
+        type:
+          allow_custom_values: true
+          members:
+            - id: png
+              value: "png"
+              brief: 'PNG image type.'
+            - id: jpg
+              value: "jpg"
+              brief: 'JPG image type.'
+            - id: unknown
+              value: "unknown"
+              brief: 'unknown type.'
+        requirement_level: opt_in
+        brief: 'Meme type.'
+        examples: ['png', 'jpg']

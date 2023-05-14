@@ -18,7 +18,7 @@ public class HighPerfLoggingBenchmarks
     private static readonly MyValue SomeValue = new ("foobar");
 
     [Benchmark]
-    public void EnabledLogWarining()
+    public void EnabledLogWarning()
     {
         Logger.LogWarning("{foo}{bar}", 42, SomeValue);
     }

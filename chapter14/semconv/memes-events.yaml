@@ -1,0 +1,24 @@
+groups:
+  - id: meme.upload.event
+    type: event
+    brief: "Describes meme upload event."
+    prefix: upload_meme
+    attributes:
+      - ref: memes.meme.name
+        requirement_level: required
+      - ref: memes.meme.size
+        requirement_level: required  
+      - ref: memes.meme.type
+        requirement_level: required
+
+  - id: meme.download.event
+    type: event
+    brief: "Describes meme download event."
+    prefix: download_meme
+    attributes:
+      - ref: memes.meme.name
+        requirement_level: required
+      - ref: memes.meme.size
+        requirement_level: required  
+      - ref: memes.meme.type
+        requirement_level: required  
