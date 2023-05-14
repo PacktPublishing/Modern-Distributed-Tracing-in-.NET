@@ -7,7 +7,7 @@ public class SemanticConventions
     public const string MemeSizeKey = "memes.meme.size";
     public const string MemeTypeKey = "memes.meme.type";
 
-    // custom events
+    // custom events:
     public const string UploadMemeEventName = "upload_meme";
     public const string DownloadMemeEventName = "download_meme";
     public const string MemesEventDomain = "memes";

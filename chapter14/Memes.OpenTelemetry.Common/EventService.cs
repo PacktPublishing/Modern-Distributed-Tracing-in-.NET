@@ -16,7 +16,9 @@ public class EventService
         _logger = logger;
     }
 
-    public void DownloadMemeEvent(string memeName, MemeContentType type, long? memeSize) => 
+    public void DownloadMemeEvent(string memeName, 
+        MemeContentType type,
+        long? memeSize) => 
         LogDownload(_logger, memeName, ContentTypeToString(type), memeSize, SemanticConventions.DownloadMemeEventName, SemanticConventions.MemesEventDomain, default!);
 
     public void UploadMemeEvent(string memeName, MemeContentType type, long? memeSize) => 

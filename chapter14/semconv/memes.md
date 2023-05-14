@@ -4,7 +4,7 @@ This document describes semantic conventions for memes application. It covers at
 
 ## Attributes
 
-When recording information about meme, it is required to use following attributes. They are available in [`SemanticAttributes](TODO) class in `Memes.OpenTelemetry.Common` package. 
+When recording information about meme, it is required to use following attributes. They are available in [`SemanticAttributes`](https://github.com/PacktPublishing/Modern-Distributed-Tracing-in-.NET/blob/main/chapter14/Memes.OpenTelemetry.Common/SemanticConventions.cs) class in `Memes.OpenTelemetry.Common` package. 
 
 <!-- semconv memes.meme -->
 | Attribute  | Type | Description  | Examples  | Requirement Level |
@@ -24,7 +24,7 @@ When recording information about meme, it is required to use following attribute
 
 ## Events
 
-Use [`EventService`](TODO) to record meme events. Following events are available:
+Use [`EventService`](https://github.com/PacktPublishing/Modern-Distributed-Tracing-in-.NET/blob/main/chapter14/Memes.OpenTelemetry.Common/EventService.cs) to record meme events. Following events are available:
 
 ## Download meme event
 
@@ -42,8 +42,28 @@ Event is populated using .NET ILogger with following additional properties:
 - Event Id: `1`
 - Severity: `Information`
 - Category: `Memes.OpenTelemetry.Common.EventService`
-- Message: "download {memes.meme.name} {memes.meme.type} {memes.meme.size}"
-- 
+- Message: `download {memes.meme.name} {memes.meme.type} {memes.meme.size} {event.name} {event.domain}`
+
+**Example:**
+
+```text
+Timestamp: 2023-05-14 17:46:03.0772945 +0000 UTC
+SeverityText: Information
+SeverityNumber: Info(9)
+Body: Str(download {memes.meme.name} {memes.meme.type} {memes.meme.size} {event.name} {event.domain})
+Attributes:
+     -> dotnet.ilogger.category: Str(Memes.OpenTelemetry.Common.EventService)
+     -> Id: Int(1)
+     -> memes.meme.name: Str(this is fine)
+     -> memes.meme.type: Str(png)
+     -> memes.meme.size: Int(126864)
+     -> event.name: Str(download_meme)
+     -> event.domain: Str(memes)
+Trace ID: 6e13520b9ceca7c0b1195624bdd563e1
+Span ID: f5ae8eda716716c6
+Flags: 0
+```
+
 ## Upload meme event
 
 <!-- semconv meme.upload.event -->
@@ -60,13 +80,33 @@ Event is populated using .NET ILogger with following additional properties:
 - Event Id: `2`
 - Severity: `Information`
 - Category: `Memes.OpenTelemetry.Common.EventService`
-- Message: "upload {memes.meme.name} {memes.meme.type} {memes.meme.size}"
+- Message: `upload {memes.meme.name} {memes.meme.type} {memes.meme.size} {event.name} {event.domain}`
+
+**Example:**
+
+```text
+Timestamp: 2023-05-14 17:46:03.0587704 +0000 UTC
+SeverityText: Information
+SeverityNumber: Info(9)
+Body: Str(upload {memes.meme.name} {memes.meme.type} {memes.meme.size} {event.name} {event.domain})
+Attributes:
+     -> dotnet.ilogger.category: Str(Memes.OpenTelemetry.Common.EventService)
+     -> Id: Int(2)
+     -> memes.meme.name: Str(this is fine)
+     -> memes.meme.type: Str(png)
+     -> memes.meme.size: Int(126864)
+     -> event.name: Str(upload_meme)
+     -> event.domain: Str(memes)
+Trace ID: b654cd06b91d04700e4c425daa47a2c3
+Span ID: fdf7f1facc2778fa
+Flags: 0
+```
 
 **Make sure to document new events in this table.**
 
 ## Traces
 
-All spans related to meme operations are expected to have `memes.meme_name` attribute. It's recorded with [`MemeNameEnrichingProcessor`](TODO) processor and is enabled by default when configuring collection with `Memes.OpenTelemetry.Common.OpenTelemetryExtensions.ConfigureTelemetry` method.
+All spans related to meme operations are expected to have `memes.meme_name` attribute. It's recorded with [`MemeNameEnrichingProcessor`](https://github.com/PacktPublishing/Modern-Distributed-Tracing-in-.NET/blob/main/chapter14/Memes.OpenTelemetry.Common/MemeNameEnrichingProcessor.cs) processor and is enabled by default when configuring collection with `Memes.OpenTelemetry.Common.OpenTelemetryExtensions.ConfigureTelemetry` method.
 
 ## Metrics
 
