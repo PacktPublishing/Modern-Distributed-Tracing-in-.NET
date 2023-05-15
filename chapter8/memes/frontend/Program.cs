@@ -58,8 +58,7 @@ static void ConfigureTelemetry(WebApplicationBuilder builder)
             .AddOtlpExporter())
     .StartWithHost();
 
-    builder.Logging
-        .AddOpenTelemetry(b => {
+    builder.Logging.AddOpenTelemetry(b => {
             b.SetResourceBuilder(resource);
             b.ParseStateValues = true;
             b.AddOtlpExporter();
