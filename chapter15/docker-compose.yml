@@ -1,0 +1,40 @@
+version: "3.9"
+services:
+  a:
+    build:
+      context: ./
+      dockerfile: ./service-a/Dockerfile
+    ports:
+      - "5051:5051"
+    environment:
+      - ServiceB__Endpoint=http://host.docker.internal:5050
+      - ASPNETCORE_URLS=http://+:5051
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://otelcollector:4317
+      - Compatibility__SupportLegacyCorrelation=true
+  c:
+    build:
+      context: ./
+      dockerfile: ./service-c/Dockerfile
+    ports:
+      - "5049:5049"
+    environment:
+      - ASPNETCORE_URLS=http://+:5049
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://otelcollector:4317
+      - Compatibility__SupportLegacyCorrelation=true      
+  otelcollector:
+    image: otel/opentelemetry-collector-contrib
+    command: ["--config=/etc/otel-collector-config.yml"]
+    ports:
+      - "4317:4317"   # OTLP gRPC receiver
+      - "4318:4318"   # OTLP http receiver
+    volumes:
+      - ./tmp/logs:/var/log
+      - ./configs/otel-collector-config.yml:/etc/otel-collector-config.yml
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    ports:
+      - "14250:14250"
+      - "14268:14268"
+      - "6831:6831/udp"
+      - "16686:16686"
+      - "16685:16685"

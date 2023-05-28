@@ -1,0 +1,35 @@
+receivers:
+  filelog:
+    include: [ /var/log/chapter15*.log ]
+    operators:
+      - type: json_parser
+        timestamp:
+          parse_from: attributes.Timestamp
+          layout: '%Y-%m-%dT%H:%M:%S.%f'
+        severity:
+          parse_from: attributes.LogLevel
+  otlp:
+    protocols:
+      http:
+      grpc:
+exporters:
+  jaeger:
+    endpoint: jaeger:14250
+    tls:
+      insecure: true
+  logging:
+    verbosity: detailed
+
+processors:
+  batch:
+
+service:
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [jaeger]
+    logs:
+      receivers: [otlp, filelog]
+      processors: [batch]
+      exporters: [logging]
