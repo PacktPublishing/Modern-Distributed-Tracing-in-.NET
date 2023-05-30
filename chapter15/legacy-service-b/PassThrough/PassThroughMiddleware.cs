@@ -21,7 +21,7 @@ namespace LegacyServiceB.PassThrough
         public static IDictionary<string, object> CurrentContext => _currentContext.Value;
         public override async Task Invoke(IOwinContext context)
         {
-            Dictionary<string, object> tc = EmptyContext;
+            var tc = EmptyContext;
             if (context.Request.Headers.TryGetValue("traceparent", out var traceparent))
             {
                 tc = new Dictionary<string, object> {{ "traceparent", traceparent[0] }};

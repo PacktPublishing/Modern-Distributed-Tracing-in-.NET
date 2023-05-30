@@ -49,8 +49,10 @@ public class CorrelationIdPropagator : TextMapPropagator
 
         traceId = correlationId.Replace("-", "");
 
-        if (correlationId.Length < 32) traceId = traceId.PadRight(32, '0');
-        else traceId = traceId.Substring(0, 32);
+        if (traceId.Length < 32) 
+            traceId = traceId.PadRight(32, '0');
+        else if (traceId.Length > 32)
+            traceId = traceId.Substring(0, 32);
 
         return true;
     }
