@@ -85,7 +85,7 @@ static void ConfigureTelemetry(WebApplicationBuilder builder, IConnectionMultipl
             // enable redis instrumentation - it needs connection instance
             .AddRedisInstrumentation(redisConnection, o => o.SetVerboseDatabaseStatements = true)
             // enable AWS instrumentation
-            .AddAWSInstrumentation(o => o.SuppressDownstreamInstrumentation = true)
+            .AddAWSInstrumentation(o => o.SuppressDownstreamInstrumentation = false)
             // enable Azure SDK instrumentation
             .AddSource("Azure.*")
             .AddOtlpExporter()

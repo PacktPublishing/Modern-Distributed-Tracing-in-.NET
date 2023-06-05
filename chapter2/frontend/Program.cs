@@ -1,5 +1,4 @@
 using frontend;
-using OpenTelemetry;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
 using System.Diagnostics;
@@ -58,6 +57,5 @@ static void ConfigureTelemetry(WebApplicationBuilder builder)
             .AddHttpClientInstrumentation()
             .AddAspNetCoreInstrumentation()
             .AddProcessInstrumentation()
-            .AddRuntimeInstrumentation())
-        .StartWithHost();
+            .AddRuntimeInstrumentation());
 }

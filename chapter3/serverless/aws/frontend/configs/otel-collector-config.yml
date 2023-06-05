@@ -8,7 +8,7 @@ receivers:
 
 exporters:
   logging:
-    logLevel: debug # to write logs from services
+    verbosity: detailed
   awsxray:
     region: 'us-west-2'
     local_mode: true

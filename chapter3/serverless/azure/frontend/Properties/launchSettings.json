@@ -4,6 +4,7 @@
       "commandName": "Project",
       "launchBrowser": true,
       "environmentVariables": {
+        "APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=5eb703be-50fc-4ea2-afde-dab49a77f6e8;IngestionEndpoint=https://westus3-1.in.applicationinsights.azure.com/",
         "ASPNETCORE_ENVIRONMENT": "Development",
         "OTEL_SERVICE_NAME": "frontend"
       },

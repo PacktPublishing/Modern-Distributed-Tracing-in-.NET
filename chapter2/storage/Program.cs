@@ -2,7 +2,6 @@ using storage;
 using Microsoft.EntityFrameworkCore;
 using OpenTelemetry.Trace;
 using OpenTelemetry.Metrics;
-using OpenTelemetry;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -56,6 +55,5 @@ static void ConfigureTelemetry(WebApplicationBuilder builder)
             .AddHttpClientInstrumentation()
             .AddAspNetCoreInstrumentation()
             .AddProcessInstrumentation()
-            .AddRuntimeInstrumentation())
-        .StartWithHost();
+            .AddRuntimeInstrumentation());
 }

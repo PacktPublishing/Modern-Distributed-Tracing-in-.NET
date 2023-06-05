@@ -3,8 +3,11 @@ scrape_configs:
     scrape_interval: 10s
     static_configs:
       - targets: ['otelcollector:8889']
-  - job_name: 'dapr'
+  - job_name: 'frontend'
     scrape_interval: 10s
     static_configs:
       - targets: ['frontend:9090']
+  - job_name: 'storage'
+    scrape_interval: 10s
+    static_configs:
       - targets: ['storage:9090']

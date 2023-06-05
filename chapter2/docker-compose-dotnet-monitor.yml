@@ -30,7 +30,7 @@ services:
     volumes:
       - ./tmp/storage-tmp:/tmp
   mysql:
-    image: docker.io/bitnami/mysql
+    image: docker.io/bitnami/mysql:8.0.33
     ports:
       - '3306:3306'
     volumes:
@@ -62,7 +62,7 @@ services:
     volumes:
       - ./tmp/storage-tmp:/tmp
   prometheus:
-    image: prom/prometheus:latest
+    image: prom/prometheus:v2.44.0
     volumes:
       - ./configs/prometheus-dotnet-montior.yml:/etc/prometheus/prometheus.yml
     ports:

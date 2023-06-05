@@ -12,7 +12,7 @@ services:
       - OTEL_SERVICE_NAME=frontend
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://awsotelcollector:4318
   awsotelcollector:
-    image: public.ecr.aws/aws-observability/aws-otel-collector:latest
+    image: public.ecr.aws/aws-observability/aws-otel-collector:v0.29.1
     command: ["--config=/etc/otel-collector-config.yml"]
     ports:
       - "8889:8889"

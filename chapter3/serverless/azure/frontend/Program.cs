@@ -1,6 +1,5 @@
 using Azure.Monitor.OpenTelemetry.Exporter;
 using frontend;
-using OpenTelemetry;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
 
@@ -49,8 +48,7 @@ static void ConfigureTelemetry(WebApplicationBuilder builder)
         .WithMetrics(meterProviderBuilder => meterProviderBuilder
             .AddAzureMonitorMetricExporter(options => options.ConnectionString = connectionString)
             .AddHttpClientInstrumentation()
-            .AddAspNetCoreInstrumentation())
-        .StartWithHost();
+            .AddAspNetCoreInstrumentation());
         
     builder.Logging.AddOpenTelemetry(options => options
         .AddAzureMonitorLogExporter(options => options.ConnectionString = connectionString));

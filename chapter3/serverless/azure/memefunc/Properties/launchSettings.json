@@ -3,11 +3,7 @@
     "memefunc": {
       "commandName": "Project",
       "commandLineArgs": "--port 5050",
-      "launchBrowser": false,
-      "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development",
-        "OTEL_SERVICE_NAME": "memefunc"
-      }
+      "launchBrowser": false
     }
   }
 }

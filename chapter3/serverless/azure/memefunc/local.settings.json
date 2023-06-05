@@ -1,9 +1,9 @@
 {
   "IsEncrypted": false,
   "Values": {
-    "ASPNETCORE_ENVIRONMENT": "Development",
     "FUNCTIONS_WORKER_RUNTIME": "dotnet-isolated",
-    "AzureWebJobsStorage": "DefaultEndpointsProtocol=https;AccountName=<accounts>;AccountKey=<key>;EndpointSuffix=core.windows.net",
-    "APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=<key>;IngestionEndpoint=<endpoint>"
+    "AzureWebJobsStorage": "DefaultEndpointsProtocol=https;AccountName=exmemestorage;AccountKey=GbZED2d/hAcnKMJhUKQARpCWSeQlTocPuo7+G8oF7pjdQvDFQF9gC1z1b5aqXOoDaU1D88CA/pL++AStKhmMeA==;EndpointSuffix=core.windows.net",
+    "APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=5eb703be-50fc-4ea2-afde-dab49a77f6e8;IngestionEndpoint=https://westus3-1.in.applicationinsights.azure.com/",
+    "OTEL_SERVICE_NAME": "memefunc"
   }
 }

@@ -33,14 +33,14 @@ services:
     volumes:
       - '${HOME}/.aws/credentials:/root/.aws/credentials'
   redis:
-    image: redis
+    image: redis:7.0.11
     restart: always
     ports:
       - "6379:6379"
     command: [ "redis-server", "--bind", "redis", "--port", "6379"]      
   otelcollector:
-    image: otel/opentelemetry-collector-contrib
-    command: ["--config=/etc/otel-collector-config.yml", "--feature-gates=receiver.dockerstats.useScraperV2"]
+    image: otel/opentelemetry-collector-contrib:0.78.0
+    command: ["--config=/etc/otel-collector-config.yml"]
     ports:
       - "8889:8889"   # Prometheus exporter metrics
       - "13133:13133" # health_check extension
@@ -53,7 +53,7 @@ services:
     depends_on:
       - jaeger
   jaeger:
-    image: jaegertracing/all-in-one:latest
+    image: jaegertracing/all-in-one:1.45.0
     ports:
       - "14250:14250"
       - "14268:14268"
@@ -61,7 +61,7 @@ services:
       - "16686:16686"
       - "16685:16685"
   prometheus:
-    image: prom/prometheus:latest
+    image: prom/prometheus:v2.44.0
     volumes:
       - ./configs/prometheus-otel.yml:/etc/prometheus/prometheus.yml
     ports:

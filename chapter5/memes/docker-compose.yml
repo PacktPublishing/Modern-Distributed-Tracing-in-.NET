@@ -27,7 +27,7 @@ services:
       # for demo purposes only, make sure to pass environment securely
       - ConnectionStrings__MySql=server=mysql;user=root;password=pwd;database=memes
   mysql:
-    image: docker.io/bitnami/mysql
+    image: docker.io/bitnami/mysql:8.0.33
     ports:
       - '3306:3306'
     volumes:
@@ -36,7 +36,7 @@ services:
       # for demo purposes only, make sure to pass environment securely
       - MYSQL_ROOT_PASSWORD=pwd
   otelcollector:
-    image: otel/opentelemetry-collector-contrib
+    image: otel/opentelemetry-collector-contrib:0.78.0
     command: ["--config=/etc/otel-collector-config.yml"]
     ports:
       - "8889:8889"   # Prometheus exporter metrics
@@ -50,7 +50,7 @@ services:
     depends_on:
       - jaeger
   jaeger:
-    image: jaegertracing/all-in-one:latest
+    image: jaegertracing/all-in-one:1.45.0
     ports:
       - "14250:14250"
       - "14268:14268"
@@ -58,7 +58,7 @@ services:
       - "16686:16686"
       - "16685:16685"
   prometheus:
-    image: prom/prometheus:latest
+    image: prom/prometheus:v2.44.0
     volumes:
       - ./configs/prometheus.yml:/etc/prometheus/prometheus.yml
     ports:
