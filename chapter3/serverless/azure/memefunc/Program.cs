@@ -10,12 +10,13 @@ var host = new HostBuilder()
     .ConfigureFunctionsWorkerDefaults()
     .ConfigureServices(services => services
         .AddOpenTelemetry()
-        .WithTracing(tracerProviderBuilder => tracerProviderBuilder
+        .WithTracing(b => b
             .AddSource("Microsoft.Azure.Functions.Worker")
-            .AddAzureMonitorTraceExporter(options => options.ConnectionString = connectionString)
+            .AddAzureMonitorTraceExporter(o => o.ConnectionString = connectionString)
             .AddHttpClientInstrumentation())
         .WithMetrics(meterProviderBuilder => meterProviderBuilder
-            .AddAzureMonitorMetricExporter(options => options.ConnectionString = connectionString)
+            .AddAzureMonitorMetricExporter(o => o
+              .ConnectionString = connectionString)
             .AddHttpClientInstrumentation()))
     .Build();
 
