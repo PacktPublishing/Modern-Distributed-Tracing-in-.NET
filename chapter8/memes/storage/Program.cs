@@ -20,8 +20,7 @@ builder.Services.AddOpenTelemetry()
         .SetResourceBuilder(resource)
         .AddAspNetCoreInstrumentation()
         .AddEntityFrameworkCoreInstrumentation()
-        .AddOtlpExporter())
-    .StartWithHost();
+        .AddOtlpExporter());
 
 builder.Logging
     .AddOpenTelemetry(b => {

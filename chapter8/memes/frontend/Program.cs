@@ -55,8 +55,7 @@ static void ConfigureTelemetry(WebApplicationBuilder builder)
             .AddSource("Storage")
             .AddAspNetCoreInstrumentation()
             .AddHttpClientInstrumentation()
-            .AddOtlpExporter())
-    .StartWithHost();
+            .AddOtlpExporter());
 
     builder.Logging.AddOpenTelemetry(b => {
             b.SetResourceBuilder(resource);
