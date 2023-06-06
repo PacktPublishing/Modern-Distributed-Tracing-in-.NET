@@ -5,7 +5,7 @@ using System.CommandLine;
 
 Sdk.CreateTracerProviderBuilder()
     .ConfigureResource(r => r.AddService("load"))
-    .SetSampler(new TraceIdRatioBasedSampler(0.01))
+    .SetSampler(new TraceIdRatioBasedSampler(0.00001))
     .AddJaegerExporter()
     .AddHttpClientInstrumentation()
     .Build();

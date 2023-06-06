@@ -7,7 +7,8 @@
       "launchUrl": "issues",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "OTEL_SERVICE_NAME": "issues"
+        "OTEL_SERVICE_NAME": "issues",
+        "OTEL_METRIC_EXPORT_INTERVAL":"15000"
       },
       "applicationUrl": "http://localhost:5051",
       "dotnetRunMessages": true

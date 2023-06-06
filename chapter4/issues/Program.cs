@@ -1,5 +1,4 @@
 using issues;
-using OpenTelemetry;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
 
@@ -17,7 +16,7 @@ builder.Services.AddHttpClient("load", c => c.BaseAddress = new Uri("http://loca
 builder.Services.AddOpenTelemetry()
     .WithTracing(tracerProviderBuilder =>
         tracerProviderBuilder
-            .SetSampler(new TraceIdRatioBasedSampler(0.01))
+            .SetSampler(new TraceIdRatioBasedSampler(0.00001))
             .AddOtlpExporter()
             .AddHttpClientInstrumentation()
             .AddAspNetCoreInstrumentation())
@@ -27,8 +26,7 @@ builder.Services.AddOpenTelemetry()
             .AddProcessInstrumentation()
             .AddRuntimeInstrumentation()
             .AddHttpClientInstrumentation()
-            .AddAspNetCoreInstrumentation())
-    .StartWithHost();
+            .AddAspNetCoreInstrumentation());
 
 var app = builder.Build();
 app.MapControllers();

@@ -1,5 +1,4 @@
 using frontend;
-using OpenTelemetry;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
@@ -82,8 +81,7 @@ static void ConfigureTelemetry(WebApplicationBuilder builder)
             .AddRuntimeInstrumentation()
             .AddHttpClientInstrumentation()
             .AddAspNetCoreInstrumentation()
-            .AddOtlpExporter())
-        .StartWithHost();
+            .AddOtlpExporter());
 }
 
 static bool IsStaticFile(PathString requestPath)
