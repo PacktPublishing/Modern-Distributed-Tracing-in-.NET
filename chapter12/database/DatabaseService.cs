@@ -54,40 +54,40 @@ public class DatabaseService
 
     public async Task Create(Record record)
     {
-        var duration = _operationDuration.Enabled ? Stopwatch.StartNew() : null;
+        var start = _operationDuration.Enabled ? Stopwatch.StartNew() : null;
         
         using var act = StartMongoActivity(CreateOperation);
 
         try
         {
             await _records.InsertOneAsync(record);
-            TrackDuration(duration, CreateOperation);
+            TrackDuration(start, CreateOperation);
         }
         catch (Exception ex)
         {
             act?.SetStatus(ActivityStatusCode.Error, ex.GetType().Name);
             act?.RecordException(ex);
-            TrackDuration(duration, CreateOperation, ex);
+            TrackDuration(start, CreateOperation, ex);
             throw;
         }
     }
 
     public async Task<Record?> Update(string id, Record record)
     {
-        var duration = _operationDuration.Enabled ? Stopwatch.StartNew() : null;
+        var start = _operationDuration.Enabled ? Stopwatch.StartNew() : null;
         using var act = StartMongoActivity(UpdateOperation);
 
         try
         {
             var result = await _records.ReplaceOneAsync(x => x.Id == id, record);
-            TrackDuration(duration, UpdateOperation);
+            TrackDuration(start, UpdateOperation);
             return result.ModifiedCount == 1 ? record : null;
         }
         catch (Exception ex)
         {
             act?.RecordException(ex);
             act?.SetStatus(ActivityStatusCode.Error, ex.GetType().Name);
-            TrackDuration(duration, UpdateOperation, ex);
+            TrackDuration(start, UpdateOperation, ex);
             throw;
         }
     }
@@ -114,20 +114,20 @@ public class DatabaseService
 
     public async Task<List<Record>> Get(Expression<Func<Record, bool>> filter)
     {
-        var duration = _operationDuration.Enabled ? Stopwatch.StartNew() : null;
+        var start = _operationDuration.Enabled ? Stopwatch.StartNew() : null;
         using var act = StartMongoActivity(FindOperation);
 
         try
         {
             var records = await _records.Find(filter).ToListAsync();
-            TrackDuration(duration, FindOperation);
+            TrackDuration(start, FindOperation);
             return records;
         }
         catch (Exception ex)
         {
             act?.RecordException(ex);
             act?.SetStatus(ActivityStatusCode.Error, ex.GetType().Name);
-            TrackDuration(duration, FindOperation, ex);
+            TrackDuration(start, FindOperation, ex);
 
             throw;
         }
@@ -135,7 +135,7 @@ public class DatabaseService
 
     public async Task BulkCreate(List<Record> records)
     {
-        var duration = _operationDuration.Enabled ? Stopwatch.StartNew() : null;
+        var start = _operationDuration.Enabled ? Stopwatch.StartNew() : null;
         using var act = StartMongoActivity(BulkWriteOperation);
 
         try
@@ -144,13 +144,13 @@ public class DatabaseService
 
             AddBulkAttributes(requests, act);
             var result = await _records.BulkWriteAsync(requests);
-            TrackDuration(duration, BulkWriteOperation);
+            TrackDuration(start, BulkWriteOperation);
         }
         catch (Exception ex)
         {
             act?.RecordException(ex);
             act?.SetStatus(ActivityStatusCode.Error, ex.GetType().Name);
-            TrackDuration(duration, BulkWriteOperation, ex);
+            TrackDuration(start, BulkWriteOperation, ex);
 
             throw;
         }
