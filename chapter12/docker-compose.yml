@@ -14,7 +14,7 @@ services:
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://otelcollector:4317
       - OTEL_METRIC_EXPORT_INTERVAL=5000
   mongo:
-    image: mongo
+    image: mongo:6.0.6
     ports:
       - "27017:27017"
     deploy:
@@ -23,7 +23,7 @@ services:
           cpus: '0.01'
           memory: 256M
   redis:
-    image: redis
+    image: redis:7.0.11
     ports:
       - "6379:6379"
     command: [ "redis-server", "--bind", "redis", "--port", "6379"]

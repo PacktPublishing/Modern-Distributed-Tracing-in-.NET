@@ -142,7 +142,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "redis_memory_used / 1024 / 1024",
+          "expr": "redis_memory_used_bytes / 1024 / 1024",
           "legendFormat": "used",
           "range": true,
           "refId": "A"
@@ -153,7 +153,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "redis_memory_rss / 1024 / 1024",
+          "expr": "redis_memory_rss_bytes / 1024 / 1024",
           "hide": false,
           "legendFormat": "rss",
           "range": true,
@@ -165,7 +165,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "redis_memory_peak / 1024 / 1024",
+          "expr": "redis_memory_peak_bytes / 1024 / 1024",
           "hide": false,
           "legendFormat": "peak",
           "range": true,
@@ -258,7 +258,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "100 * sum by (state) (rate(redis_cpu_time[$__rate_interval]))",
+          "expr": "100 * sum by (state) (rate(redis_cpu_time_seconds_total [$__rate_interval]))",
           "legendFormat": "__auto",
           "range": true,
           "refId": "A"
@@ -350,7 +350,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "redis_uptime",
+          "expr": "redis_uptime_seconds_total ",
           "legendFormat": "__auto",
           "range": true,
           "refId": "A"
@@ -442,7 +442,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "rate(redis_keys_evicted[$__rate_interval])",
+          "expr": "rate(redis_keys_evicted_total[$__rate_interval])",
           "legendFormat": "evicted",
           "range": true,
           "refId": "A"
@@ -453,7 +453,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "rate(redis_keys_expired[$__rate_interval])",
+          "expr": "rate(redis_keys_expired_total[$__rate_interval])",
           "hide": false,
           "legendFormat": "expired",
           "range": true,
@@ -546,7 +546,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "100 * sum by (net_peer_name) (rate(db_operation_duration_count{db_operation=\"GetString\",db_system=\"redis\",cache_hit=\"true\"} [$__rate_interval])) / sum by (net_peer_name)  (rate(db_operation_duration_count{db_operation=\"GetString\",db_system=\"redis\",db_redis_status=\"ok\"}[$__rate_interval]))",
+          "expr": "100 * sum by (net_peer_name) (rate(db_operation_duration_milliseconds_count{db_operation=\"GetString\",db_system=\"redis\",cache_hit=\"true\"} [$__rate_interval])) / sum by (net_peer_name)  (rate(db_operation_duration_milliseconds_count{db_operation=\"GetString\",db_system=\"redis\",db_redis_status=\"ok\"}[$__rate_interval]))",
           "legendFormat": "__auto",
           "range": true,
           "refId": "A"
@@ -638,7 +638,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "sum by (db_mongodb_collection, db_name, db_operation) (rate(db_operation_duration_count{db_mongodb_status=\"ok\",db_system=\"mongodb\"}[$__rate_interval]))",
+          "expr": "sum by (db_mongodb_collection, db_name, db_operation) (rate(db_operation_duration_milliseconds_count{db_mongodb_status=\"ok\",db_system=\"mongodb\"}[$__rate_interval]))",
           "legendFormat": "{{db_name}}.{{db_mongodb_collection}} - {{db_operation}}",
           "range": true,
           "refId": "A"
@@ -730,7 +730,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "sum(rate(redis_commands_processed[$__rate_interval]))",
+          "expr": "sum(rate(redis_commands_processed_total [1m]))",
           "legendFormat": "commands",
           "range": true,
           "refId": "A"
@@ -822,7 +822,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "sum (rate(redis_keyspace_hits[$__rate_interval]))",
+          "expr": "sum (rate(redis_keyspace_hits_total[$__rate_interval]))",
           "legendFormat": "hit rate",
           "range": true,
           "refId": "A"
@@ -833,7 +833,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "sum (rate(redis_keyspace_misses[$__rate_interval]))",
+          "expr": "sum (rate(redis_keyspace_misses_total[$__rate_interval]))",
           "hide": false,
           "legendFormat": "miss rate",
           "range": true,
@@ -926,7 +926,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "sum by (db_name, db_mongodb_collection, db_operation, db_mongodb_status) (rate(db_operation_duration_count{db_mongodb_status!=\"ok\",db_system=\"mongodb\"}[$__rate_interval]))",
+          "expr": "sum by (db_name, db_mongodb_collection, db_operation, db_mongodb_status) (rate(db_operation_duration_milliseconds_count{db_mongodb_status!=\"ok\",db_system=\"mongodb\"}[$__rate_interval]))",
           "legendFormat": "{{db_mongodb_collection}} - {{db_operation}} - {{db_mongodb_status}}",
           "range": true,
           "refId": "A"
@@ -937,7 +937,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "sum by (db_operation, db_redis_status) (rate( db_operation_duration_count{db_redis_status!=\"ok\",db_system=\"redis\"}[$__rate_interval]))",
+          "expr": "sum by (db_operation, db_redis_status) (rate( db_operation_duration_milliseconds_count{db_redis_status!=\"ok\",db_system=\"redis\"}[$__rate_interval]))",
           "hide": false,
           "legendFormat": "redis - {{db_operation}} - {{db_redis_status}}",
           "range": true,
@@ -1055,7 +1055,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "histogram_quantile(0.95, sum(rate(db_operation_duration_bucket{db_mongodb_status!=\"ok\"}[$__rate_interval])) by (le, net_peer_name, db_mongodb_status))",
+          "expr": "histogram_quantile(0.95, sum(rate(db_operation_duration_milliseconds_bucket{db_mongodb_status!=\"ok\"}[$__rate_interval])) by (le, net_peer_name, db_mongodb_status))",
           "legendFormat": "p95 {{net_peer_name}} {{db_mongodb_status}}",
           "range": true,
           "refId": "A"
@@ -1066,7 +1066,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "histogram_quantile(0.95, sum(rate(db_operation_duration_bucket{db_redis_status!=\"ok\"}[$__rate_interval])) by (le, net_peer_name, db_redis_status))",
+          "expr": "histogram_quantile(0.95, sum(rate(db_operation_duration_milliseconds_bucket{db_redis_status!=\"ok\"}[$__rate_interval])) by (le, net_peer_name, db_redis_status))",
           "hide": false,
           "legendFormat": "p95 {{net_peer_name}} {{db_redis_status}}",
           "range": true,
@@ -1078,7 +1078,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "histogram_quantile(0.50, sum(rate(db_operation_duration_bucket{db_redis_status!=\"ok\"}[$__rate_interval])) by (le, net_peer_name, db_redis_status))",
+          "expr": "histogram_quantile(0.50, sum(rate(db_operation_duration_milliseconds_bucket{db_redis_status!=\"ok\"}[$__rate_interval])) by (le, net_peer_name, db_redis_status))",
           "hide": false,
           "legendFormat": "p50 {{net_peer_name}} {{db_redis_status}}",
           "range": true,
@@ -1090,7 +1090,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "histogram_quantile(0.50, sum(rate(db_operation_duration_bucket{db_mongodb_status!=\"ok\"}[$__rate_interval])) by (le, net_peer_name, db_mongodb_status))",
+          "expr": "histogram_quantile(0.50, sum(rate(db_operation_duration_milliseconds_bucket{db_mongodb_status!=\"ok\"}[$__rate_interval])) by (le, net_peer_name, db_mongodb_status))",
           "hide": false,
           "legendFormat": "p50 {{net_peer_name}} {{db_mongodb_status}}",
           "range": true,
@@ -1208,7 +1208,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "histogram_quantile(0.95, sum(rate(db_operation_duration_bucket{db_mongodb_status=\"ok\"}[$__rate_interval])) by (le, net_peer_name))",
+          "expr": "histogram_quantile(0.95, sum(rate(db_operation_duration_milliseconds_bucket{db_mongodb_status=\"ok\"}[$__rate_interval])) by (le, net_peer_name))",
           "legendFormat": "mongo p95 {{net_peer_name}}",
           "range": true,
           "refId": "A"
@@ -1219,7 +1219,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "histogram_quantile(0.95, sum(rate(db_operation_duration_bucket{db_redis_status=\"ok\"}[$__rate_interval])) by (le, net_peer_name))",
+          "expr": "histogram_quantile(0.95, sum(rate(db_operation_duration_milliseconds_bucket{db_redis_status=\"ok\"}[$__rate_interval])) by (le, net_peer_name))",
           "hide": false,
           "legendFormat": "redis p95 {{net_peer_name}}",
           "range": true,
@@ -1231,7 +1231,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "histogram_quantile(0.50, sum(rate(db_operation_duration_bucket{db_redis_status=\"ok\"}[$__rate_interval])) by (le, net_peer_name))",
+          "expr": "histogram_quantile(0.50, sum(rate(db_operation_duration_milliseconds_bucket{db_redis_status=\"ok\"}[$__rate_interval])) by (le, net_peer_name))",
           "hide": false,
           "legendFormat": "redis p50 {{net_peer_name}}",
           "range": true,
@@ -1262,13 +1262,13 @@
     "list": []
   },
   "time": {
-    "from": "now-6h",
+    "from": "now-5m",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "",
-  "title": "Redis",
+  "title": "Database and cache",
   "uid": "BCzYNfY4z",
-  "version": 8,
+  "version": 9,
   "weekStart": ""
 }

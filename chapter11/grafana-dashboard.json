@@ -145,7 +145,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "sum by (net_peer_name, messaging_destination_name) (rate(messaging_azqueues_publish_duration_count{messaging_azqueue_status=\"ok\"}[$__rate_interval]))",
+          "expr": "sum by (net_peer_name, messaging_destination_name) (rate(messaging_azqueues_publish_duration_milliseconds_count{messaging_azqueue_status=\"ok\"}[$__rate_interval]))",
           "instant": false,
           "legendFormat": "sent to {{net_peer_name}}/{{messaging_destination_name}}",
           "range": true,
@@ -157,7 +157,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "sum by (net_peer_name, messaging_source_name) (rate(messaging_azqueues_consumer_lag_count[$__rate_interval]))",
+          "expr": "sum by (net_peer_name, messaging_source_name) (rate(messaging_azqueues_consumer_lag_seconds_count[$__rate_interval]))",
           "hide": false,
           "legendFormat": "received - {{net_peer_name}}/{{messaging_source_name}}",
           "range": true,
@@ -169,7 +169,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "sum by (net_peer_name, messaging_source_name) (rate(messaging_azqueues_process_message_duration_count{messaging_azqueue_status=\"ok\"}[$__rate_interval]))",
+          "expr": "sum by (net_peer_name, messaging_source_name) (rate(messaging_azqueues_process_message_duration_milliseconds_count{messaging_azqueue_status=\"ok\"}[$__rate_interval]))",
           "hide": false,
           "legendFormat": "processed - {{net_peer_name}}/{{messaging_source_name}}",
           "range": true,
@@ -262,7 +262,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "histogram_quantile(0.95, sum(rate(messaging_azqueues_consumer_lag_bucket[$__rate_interval])) by (le, messaging_source_name, net_peer_name)) ",
+          "expr": "histogram_quantile(0.95, sum(rate(messaging_azqueues_consumer_lag_seconds_bucket[$__rate_interval])) by (le, messaging_source_name, net_peer_name)) ",
           "legendFormat": "{{net_peer_name}}/{{messaging_source_name}}",
           "range": true,
           "refId": "A"
@@ -354,7 +354,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "sum by (net_peer_name, messaging_destination_name, messaging_azqueue_status) (rate(messaging_azqueues_publish_duration_count{messaging_azqueue_status!=\"ok\"}[$__rate_interval]))",
+          "expr": "sum by (net_peer_name, messaging_destination_name, messaging_azqueue_status) (rate(messaging_azqueues_publish_duration_milliseconds_count{messaging_azqueue_status!=\"ok\"}[$__rate_interval]))",
           "legendFormat": "send {{net_peer_name}}/{{messaging_destination_name}} - {{messaging_azqueue_status}}",
           "range": true,
           "refId": "A"
@@ -365,7 +365,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "sum by (net_peer_name, messaging_source_name, messaging_azqueue_status) (rate(messaging_azqueues_process_loop_duration_count{messaging_azqueue_status=\"fail\"}[$__rate_interval]))",
+          "expr": "sum by (net_peer_name, messaging_source_name, messaging_azqueue_status) (rate(messaging_azqueues_process_loop_duration_milliseconds_count{messaging_azqueue_status=\"fail\"}[$__rate_interval]))",
           "hide": false,
           "legendFormat": "batch process {{net_peer_name}}/{{messaging_source_name}} - {{messaging_azqueue_status}}",
           "range": true,
@@ -377,7 +377,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "sum by (net_peer_name, messaging_source_name, messaging_azqueue_status) (rate(messaging_azqueues_process_message_duration_count{messaging_azqueue_status!=\"ok\"}[$__rate_interval]))",
+          "expr": "sum by (net_peer_name, messaging_source_name, messaging_azqueue_status) (rate(messaging_azqueues_process_message_duration_milliseconds_count{messaging_azqueue_status!=\"ok\"}[$__rate_interval]))",
           "hide": false,
           "legendFormat": "message process {{net_peer_name}}/{{messaging_source_name}} - {{messaging_azqueue_status}}",
           "range": true,
@@ -470,7 +470,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "histogram_quantile(0.95, sum(rate(messaging_azqueues_publish_duration_bucket[$__rate_interval])) by (le, messaging_destination_name, net_peer_name, messaging_azqueue_status)) ",
+          "expr": "histogram_quantile(0.95, sum(rate(messaging_azqueues_publish_duration_milliseconds_bucket[$__rate_interval])) by (le, messaging_destination_name, net_peer_name, messaging_azqueue_status)) ",
           "legendFormat": "{{net_peer_name}}/{{messaging_destination_name}} - {{messaging_azqueue_status}}",
           "range": true,
           "refId": "A"
@@ -562,7 +562,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "max by (net_peer_name, messaging_source_name) (messaging_azqueues_queue_size)",
+          "expr": "max by (net_peer_name, messaging_source_name) (messaging_azqueues_queue_size_messages)",
           "legendFormat": "{{net_peer_name}}/{{messaging_source_name}}",
           "range": true,
           "refId": "A"
@@ -654,7 +654,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "sum by (net_peer_name, messaging_source_name) (rate(messaging_azqueues_process_message_duration_count[$__rate_interval])) / sum by (net_peer_name, messaging_source_name) (rate(messaging_azqueues_process_loop_duration_count{messaging_azqueues_status!=\"empty\"}[$__rate_interval])) ",
+          "expr": "sum by (net_peer_name, messaging_source_name) (rate(messaging_azqueues_process_message_duration_milliseconds_count[$__rate_interval])) / sum by (net_peer_name, messaging_source_name) (rate(messaging_azqueues_process_loop_duration_milliseconds_count{messaging_azqueues_status!=\"empty\"}[$__rate_interval])) ",
           "legendFormat": "{{net_peer_name}}/{{messaging_source_name}}",
           "range": true,
           "refId": "A"
@@ -746,7 +746,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "histogram_quantile(0.95, sum(rate(messaging_azqueues_process_loop_duration_bucket[$__rate_interval])) by (le, messaging_source_name, net_peer_name, messaging_azqueue_status)) ",
+          "expr": "histogram_quantile(0.95, sum(rate(messaging_azqueues_process_loop_duration_milliseconds_bucket[$__rate_interval])) by (le, messaging_source_name, net_peer_name, messaging_azqueue_status)) ",
           "legendFormat": "{{net_peer_name}}/{{messaging_source_name}} - {{messaging_azqueue_status}}",
           "range": true,
           "refId": "A"
@@ -838,7 +838,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "histogram_quantile(0.95, sum(rate(messaging_azqueues_process_message_duration_bucket[$__rate_interval])) by (le, messaging_source_name, net_peer_name, messaging_azqueue_status)) ",
+          "expr": "histogram_quantile(0.95, sum(rate(messaging_azqueues_process_message_duration_milliseconds_bucket[$__rate_interval])) by (le, messaging_source_name, net_peer_name, messaging_azqueue_status)) ",
           "legendFormat": "{{net_peer_name}}/{{messaging_source_name}} - {{messaging_azqueue_status}}",
           "range": true,
           "refId": "A"
@@ -930,18 +930,10 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "sum(rate(messaging_azqueues_process_loop_duration_count{messaging_azqueue_status=\"empty\"}[$__rate_interval])) by (net_peer_name, messaging_source_name)",
+          "expr": "sum(rate(messaging_azqueues_process_loop_duration_milliseconds_count{messaging_azqueue_status=\"empty\"}[$__rate_interval])) by (net_peer_name, messaging_source_name)",
           "legendFormat": "{{net_peer_name}}/{{messaging_source_name}}",
           "range": true,
           "refId": "A"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "hide": false,
-          "refId": "B"
         }
       ],
       "title": "No messages received, rate per second",
@@ -1030,7 +1022,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "histogram_quantile(0.95, sum(rate(http_client_duration_bucket[$__rate_interval])) by (net_peer_name, service_name, le, http_method, http_status_code))",
+          "expr": "histogram_quantile(0.95, sum(rate(http_client_duration_milliseconds_bucket[$__rate_interval])) by (net_peer_name, service_name, le, http_method, http_status_code))",
           "legendFormat": "{{service_name}} to {{net_peer_name}} - [{{http_method}}] {{http_status_code}}",
           "range": true,
           "refId": "A"
@@ -1122,7 +1114,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "sum(rate(http_client_duration_count[$__rate_interval])) by (net_peer_name, http_status_code, service_name, http_method)",
+          "expr": "sum(rate(http_client_duration_milliseconds_count[$__rate_interval])) by (net_peer_name, http_status_code, service_name, http_method)",
           "legendFormat": "{{service_name}} to {{net_peer_name}} - [{{http_method}}] {{http_status_code}}",
           "range": true,
           "refId": "A"
@@ -1214,7 +1206,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "count(count(process_cpu_time) by (service_instance_id, service_name)) by (service_name)",
+          "expr": "count(count(process_cpu_time_seconds_total) by (service_instance_id, service_name)) by (service_name)",
           "legendFormat": "{{servic_name}}",
           "range": true,
           "refId": "A"
@@ -1308,7 +1300,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "sum(rate(messaging_azqueues_process_loop_duration_count[$__rate_interval])) by (messaging_source_name, messaging_azqueue_status)",
+          "expr": "sum(rate(messaging_azqueues_process_loop_duration_milliseconds_count[$__rate_interval])) by (messaging_source_name, messaging_azqueue_status)",
           "legendFormat": "{{messaging_source_name}} - {{messaging_azqueue_status}}",
           "range": true,
           "refId": "A"
@@ -1333,6 +1325,6 @@
   "timezone": "",
   "title": "Azure Storage Queues dashboard",
   "uid": "kjM6IXaVz",
-  "version": 8,
+  "version": 9,
   "weekStart": ""
 }

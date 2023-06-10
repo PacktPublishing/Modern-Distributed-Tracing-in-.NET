@@ -77,7 +77,7 @@ public class NotifierService : Nofitier.NofitierBase
 
     private static int ParseIndex(string text)
     {
-        if (DateTimeOffset.UtcNow.ToUnixTimeSeconds() % 5 == 0)
+        if (DateTimeOffset.UtcNow.ToUnixTimeSeconds() % 10 == 0)
         {
             throw new ArgumentException("bad luck", nameof(text));
         }

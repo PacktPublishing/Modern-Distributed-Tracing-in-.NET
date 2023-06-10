@@ -92,7 +92,7 @@
             },
             "editorMode": "code",
             "exemplar": true,
-            "expr": "avg by (job, generation) (rate(process_runtime_dotnet_gc_collections_count[$__rate_interval]))",
+            "expr": "avg by (job, generation) (rate(process_runtime_dotnet_gc_collections_count_total$__rate_interval]))",
             "interval": "",
             "legendFormat": "{{generation}}",
             "range": true,
@@ -236,7 +236,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "sum by (http_route, http_status_code, http_method) (rate(http_server_duration_count{http_route!=\"\"}[$__rate_interval]))",
+          "expr": "sum by (http_route, http_status_code, http_method) (rate(http_server_duration_milliseconds_count{http_route!=\"\"}[$__rate_interval]))",
           "legendFormat": "[{{http_method}}]  {{http_route}} - {{http_status_code}}",
           "range": true,
           "refId": "A"
@@ -328,7 +328,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "avg by (state) (rate(process_cpu_time[$__rate_interval])) * 100",
+          "expr": "avg by (state) (rate(process_cpu_time_seconds_total [$__rate_interval])) * 100",
           "legendFormat": "{{state}}",
           "range": true,
           "refId": "A"
@@ -420,7 +420,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "sum by (job) (rate(process_runtime_dotnet_monitor_lock_contention_count[5m]))",
+          "expr": "sum by (job) (rate(process_runtime_dotnet_monitor_lock_contention_count_total [$__rate_interval]))",
           "legendFormat": "count",
           "range": true,
           "refId": "A"
@@ -513,7 +513,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "process_runtime_dotnet_gc_heap_size",
+          "expr": "process_runtime_dotnet_gc_heap_size_bytes",
           "legendFormat": "{{generation}}",
           "range": true,
           "refId": "A"
@@ -524,7 +524,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "process_memory_usage",
+          "expr": "process_memory_usage_bytes",
           "hide": false,
           "legendFormat": "physical memory",
           "range": true,
@@ -759,7 +759,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": " histogram_quantile(0.95, sum(rate(http_server_duration_bucket{http_route!=\"\"}[$__rate_interval])) by (le, http_route, http_method)) ",
+          "expr": " histogram_quantile(0.95, sum(rate(http_server_duration_milliseconds_bucket{http_route!=\"\"}[$__rate_interval])) by (le, http_route, http_method)) ",
           "legendFormat": "p95 {{http_method}} {{http_route}}",
           "range": true,
           "refId": "A"
@@ -770,7 +770,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": " histogram_quantile(0.5, sum(rate(http_server_duration_bucket{http_route!=\"\"}[$__rate_interval])) by (le, http_route, http_method)) ",
+          "expr": " histogram_quantile(0.5, sum(rate(http_server_duration_milliseconds_bucket{http_route!=\"\"}[$__rate_interval])) by (le, http_route, http_method)) ",
           "hide": false,
           "legendFormat": "p50  {{http_method}} {{http_route}}",
           "range": true,
@@ -901,7 +901,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "sum by (http_status_code, http_route, job) (rate(http_server_duration_count{http_status_code!=\"200\",http_status_code!=\"201\"}[$__rate_interval]))",
+          "expr": "sum by (http_status_code, http_route, job) (rate(http_server_duration_milliseconds_count{http_status_code!=\"200\",http_status_code!=\"201\"}[$__rate_interval]))",
           "legendFormat": "{{http_route}} - {{http_status_code}}",
           "range": true,
           "refId": "A"
@@ -912,7 +912,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "rate(process_runtime_dotnet_exceptions_count[$__rate_interval])",
+          "expr": "rate(process_runtime_dotnet_exceptions_count_total[$__rate_interval])",
           "hide": false,
           "legendFormat": "exception rate",
           "range": true,
@@ -937,7 +937,7 @@
   "timepicker": {},
   "timezone": "",
   "title": ".NET runtime metrics",
-  "uid": "BVO2tFHVz",
-  "version": 24,
+  "uid": "1BVO2tFHVz",
+  "version": 2,
   "weekStart": ""
 }

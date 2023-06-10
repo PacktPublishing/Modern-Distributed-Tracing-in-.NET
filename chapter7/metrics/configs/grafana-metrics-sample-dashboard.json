@@ -15,7 +15,7 @@
       "type": "grafana",
       "id": "grafana",
       "name": "Grafana",
-      "version": "9.3.2"
+      "version": "9.1.1"
     },
     {
       "type": "datasource",
@@ -142,7 +142,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "histogram_quantile(0.95, sum(rate(processor_lag_bucket[5m])) by (le, queue))",
+          "expr": "histogram_quantile(0.95, sum(rate(processor_lag_milliseconds_bucket[$__rate_interval])) by (le, queue))",
           "legendFormat": "__auto",
           "range": true,
           "refId": "A"
@@ -327,7 +327,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "histogram_quantile(0.95, sum(rate(processor_processing_duration_bucket{status=\"Ok\"}[5m])) by (le, queue))",
+          "expr": "histogram_quantile(0.95, sum(rate(processor_processing_duration_milliseconds_bucket{status=\"Ok\"}[$__rate_interval])) by (le, queue))",
           "legendFormat": "__auto",
           "range": true,
           "refId": "A"
@@ -419,7 +419,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "sum by (status) (rate(processor_processing_duration_count[5m]))",
+          "expr": "sum by (status) (rate(processor_processing_duration_milliseconds_count[$__rate_interval]))",
           "legendFormat": "{{status}}",
           "range": true,
           "refId": "A"
@@ -511,7 +511,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "sum by (queue) (rate(queue_enqueued_count[5m]))",
+          "expr": "sum by (queue) (rate(queue_enqueued_count_total[$__rate_interval]))",
           "hide": false,
           "legendFormat": "__auto",
           "range": true,
@@ -536,6 +536,6 @@
   "timezone": "",
   "title": "Metrics sample",
   "uid": "A1vurtpVz",
-  "version": 5,
+  "version": 2,
   "weekStart": ""
 }
