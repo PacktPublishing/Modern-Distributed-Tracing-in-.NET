@@ -87,7 +87,7 @@ static void ConfigureTelemetry(WebApplicationBuilder builder, IConnectionMultipl
             // enable AWS instrumentation
             .AddAWSInstrumentation(o => o.SuppressDownstreamInstrumentation = false)
             // enable Azure SDK instrumentation
-            .AddSource("Azure.*")
+            .AddSource("Azure.Storage.*")
             .AddOtlpExporter()
             .AddHttpClientInstrumentation()
             .AddAspNetCoreInstrumentation())
