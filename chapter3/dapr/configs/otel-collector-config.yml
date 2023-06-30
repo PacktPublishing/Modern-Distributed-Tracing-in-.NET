@@ -5,10 +5,6 @@ receivers:
     protocols:
       http:
       grpc:
-  docker_stats:
-    api_version: 1.41
-    env_vars_to_metric_labels:
-      OTEL_SERVICE_NAME: service.name
 
 exporters:
   jaeger:
@@ -17,7 +13,7 @@ exporters:
       insecure: true
   prometheus:
     endpoint: "0.0.0.0:8889"
-    resource_to_telemetry_conversion: 
+    resource_to_telemetry_conversion:
       enabled: true
   logging:
     verbosity: normal
@@ -32,7 +28,7 @@ service:
       processors: [batch]
       exporters: [jaeger]
     metrics:
-      receivers: [docker_stats, otlp]
+      receivers: [otlp]
       processors: [batch]
       exporters: [prometheus]
     logs:

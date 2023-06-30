@@ -2,10 +2,10 @@ version: "3.9"
 services:
   database:
     build:
-      context: ./    
+      context: ./
       dockerfile: ./database/Dockerfile
     ports:
-      - "5051:5051"    
+      - "5051:5051"
     environment:
       - Mongo__ConnectionString=mongodb://mongo:27017
       - Redis__ConnectionString=redis:6379

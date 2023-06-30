@@ -37,7 +37,7 @@ services:
     restart: always
     ports:
       - "6379:6379"
-    command: [ "redis-server", "--bind", "redis", "--port", "6379"]      
+    command: [ "redis-server", "--bind", "redis", "--port", "6379"]
   otelcollector:
     image: otel/opentelemetry-collector-contrib:0.78.0
     command: ["--config=/etc/otel-collector-config.yml"]
@@ -68,7 +68,7 @@ services:
       - "9090:9090"
     depends_on:
       - otelcollector
-      
+
 volumes:
   mysql_data:
     driver: local

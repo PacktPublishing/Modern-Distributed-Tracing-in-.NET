@@ -1,8 +1,4 @@
 receivers:
-  docker_stats:
-    api_version: 1.41
-    env_vars_to_metric_labels:
-      OTEL_SERVICE_NAME: service.name
   otlp:
     protocols:
       http:
@@ -15,7 +11,7 @@ exporters:
       insecure: true
   prometheus:
     endpoint: "0.0.0.0:8889"
-    resource_to_telemetry_conversion: 
+    resource_to_telemetry_conversion:
       enabled: true
   logging:
     verbosity: detailed
@@ -32,7 +28,7 @@ service:
       processors: [batch, resourcedetection/docker]
       exporters: [jaeger]
     metrics:
-      receivers: [docker_stats, otlp]
+      receivers: [otlp]
       processors: [batch, resourcedetection/docker]
       exporters: [prometheus]
     logs:

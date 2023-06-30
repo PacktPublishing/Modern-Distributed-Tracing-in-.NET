@@ -6,10 +6,6 @@ receivers:
   redis:
     endpoint: "redis:6379"
     collection_interval: 5s
-  docker_stats:
-    api_version: 1.41
-    env_vars_to_metric_labels:
-      OTEL_SERVICE_NAME: service.name
 
 exporters:
   jaeger:
@@ -18,7 +14,7 @@ exporters:
       insecure: true
   prometheus:
     endpoint: "0.0.0.0:8889"
-    resource_to_telemetry_conversion: 
+    resource_to_telemetry_conversion:
       enabled: true
 
 processors:
@@ -33,6 +29,6 @@ service:
       processors: [batch]
       exporters: [jaeger]
     metrics:
-      receivers: [otlp, redis, docker_stats]
+      receivers: [otlp, redis]
       processors: [batch, resourcedetection/docker]
       exporters: [prometheus]

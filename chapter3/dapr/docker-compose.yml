@@ -11,12 +11,12 @@ services:
     depends_on:
       - storage
       - placement
-      - otelcollector      
+      - otelcollector
     environment:
       - ASPNETCORE_URLS=http://+:5051
       - OTEL_SERVICE_NAME=frontend
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://otelcollector:4317
-      - Storage__Endpoint=http://storage:5050      
+      - Storage__Endpoint=http://storage:5050
   frontend-dapr:
     image: "daprio/daprd:1.11.0-rc.7"
     command: [ "./daprd",
@@ -36,7 +36,7 @@ services:
     ports:
       - "5050:5050"
       - "50001:50001"
-      - "8886:9090"      
+      - "8886:9090"
     depends_on:
       - placement
       - otelcollector
@@ -46,7 +46,7 @@ services:
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://otelcollector:4317
   storage-dapr:
     image: "daprio/daprd:1.11.0-rc.7"
-    command: [ "./daprd", 
+    command: [ "./daprd",
       "--app-id", "storage",
       "--app-port", "5050",
       "--placement-host-address", "placement:50006",
@@ -97,4 +97,4 @@ services:
     image: "daprio/dapr:1.11.0-rc.7"
     command: ["./placement", "--port", "50006"]
     ports:
-      - "50006:50006"      
+      - "50006:50006"

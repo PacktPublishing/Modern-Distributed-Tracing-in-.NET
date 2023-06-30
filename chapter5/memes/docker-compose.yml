@@ -36,6 +36,7 @@ services:
       # for demo purposes only, make sure to pass environment securely
       - MYSQL_ROOT_PASSWORD=pwd
   otelcollector:
+    user: "1001" #change to your user id if running on WSL (or give 1001 ownership over /var/run/docker.sock)
     image: otel/opentelemetry-collector-contrib:0.78.0
     command: ["--config=/etc/otel-collector-config.yml"]
     ports:
@@ -65,7 +66,7 @@ services:
       - "9090:9090"
     depends_on:
       - otelcollector
-      
+
 volumes:
   mysql_data:
     driver: local
