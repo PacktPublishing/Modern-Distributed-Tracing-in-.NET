@@ -58,13 +58,13 @@ services:
       - "52335:52335"
     environment:
       - DOTNET_URLS=http://+:52333
-      - DOTNET_Metrics__Endpoints=http://+:52335     
+      - DOTNET_Metrics__Endpoints=http://+:52335
     volumes:
       - ./tmp/storage-tmp:/tmp
   prometheus:
     image: prom/prometheus:v2.44.0
     volumes:
-      - ./configs/prometheus-dotnet-montior.yml:/etc/prometheus/prometheus.yml
+      - ./configs/prometheus-dotnet-monitor.yml:/etc/prometheus/prometheus.yml
     ports:
       - "9090:9090"
     depends_on:
