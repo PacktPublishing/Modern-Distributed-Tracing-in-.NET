@@ -1,6 +1,3 @@
-
-<b><p align='center'>[![Packt Sale](https://static.packt-cdn.com/assets/images/packt+events/Improve_UX.png)](https://packt.link/algotradingpython)</p></b> 
-
 # Modern Distributed Tracing in .NET
 
 <a href="https://www.packtpub.com/product/modern-distributed-tracing-in-net/9781837636136?utm_source=github&utm_medium=repository&utm_campaign="><img src="https://content.packt.com/B19423/cover_image_small.jpg" alt="Modern Distributed Tracing in .NET" height="256px" align="right"></a>
